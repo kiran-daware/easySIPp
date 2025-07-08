@@ -84,6 +84,7 @@ def run_uac(uac_config):
     except Exception as e:
         sipp_error = f"Error: {e}"
         logger.exception('Exception occurred while trying to run sipp')
+        return sipp_error
 
 
 def run_uas(uas_config):
@@ -120,6 +121,7 @@ def run_uas(uas_config):
     except Exception as e:
         sipp_error = f"Error: {e}"
         logger.exception('Exception occurred while trying to run sipp')
+        return sipp_error
 
 
 ############ function to get running Sipp Process ######################################

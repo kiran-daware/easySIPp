@@ -2,21 +2,19 @@ from django.http import HttpResponse
 from django.views.decorators.cache import never_cache
 from django.shortcuts import render, redirect
 from django.conf import settings
+from django.urls import reverse
 from django.contrib import messages
 from .forms import UACForm, UASForm
 from .forms import xmlUploadForm
 from .models import UacAppConfig, UasAppConfig
-from django.urls import reverse
-import xml.etree.ElementTree as ET
-import os, time, signal
-import psutil
 from .scripts.ksipp import get_sipp_processes, cleanFilename, run_uac, run_uas
 from .scripts.list import listXmlFiles
+import xml.etree.ElementTree as ET
+import os, signal
+import psutil
 import logging
 
-
 logger = logging.getLogger(__name__)
-
 
 ################### Index Page Functions #############################
 
@@ -25,24 +23,22 @@ def index(request):
     showMoreOptionsForm = False
     uac_form = None
     uas_form = None
+    uac_choices = UacAppConfig.objects.values_list('uac_key', 'uac_config_name')
+    uas_choices = UasAppConfig.objects.values_list('uas_key', 'uas_config_name')
 
     if request.method == 'POST':
         if 'selected_key' in request.POST:
             selected_key = request.POST['selected_key']
-            print(selected_key)
-            try:
-                if selected_key.startswith('uac'):
-                    uac_config = UacAppConfig.objects.get(uac_key=selected_key)
-                    uac_config.is_active_config = True
-                    uac_config.save()
 
-                elif selected_key.startswith('uas'):
-                    uas_config = UasAppConfig.objects.get(uas_key=selected_key)
-                    uas_config.is_active_config = True
-                    uas_config.save()
+            if selected_key.startswith('uac'):
+                uac_config = UacAppConfig.objects.get(uac_key=selected_key)
+                uac_config.is_active_config = True
+                uac_config.save()
 
-            except Exception as e:
-                logger.exception("Unhandled exception:", e)
+            elif selected_key.startswith('uas'):
+                uas_config = UasAppConfig.objects.get(uas_key=selected_key)
+                uas_config.is_active_config = True
+                uas_config.save()
             
             return redirect('index')
 
@@ -54,12 +50,12 @@ def index(request):
                 selected_uac_key = request.POST.get('uac_key')
                 if selected_uac_key:
                     uac_config = UacAppConfig.objects.get(uac_key=selected_uac_key)
-                    uac_form = UACForm(request.POST, instance=uac_config)
+                    uac_form = UACForm(request.POST, instance=uac_config, uac_choices=uac_choices)
+
                     if uac_form.is_valid():
                         uac_form.save()
                         if save_conf == 'save_run_uac':
                             sipp_error = run_uac(uac_config)
-                            # Only redirect if no error
                             if sipp_error:
                                 messages.error(request, sipp_error)
                                 return redirect('index')
@@ -67,6 +63,7 @@ def index(request):
                         return redirect('index')
 
                     else:
+                        logger.warning(uac_form.errors)
                         fields_to_check = ['called_party_number', 'calling_party_number', 'stun_server',
                                            'total_no_of_calls', 'cps']
                         showMoreOptionsForm = any(field in uac_form.errors for field in fields_to_check)
@@ -76,7 +73,7 @@ def index(request):
                 selected_uas_key = request.POST.get('uas_key')
                 if selected_uas_key:
                     uas_config = UasAppConfig.objects.get(uas_key=selected_uas_key)
-                    uas_form = UASForm(request.POST, instance=uas_config)      
+                    uas_form = UASForm(request.POST, instance=uas_config, uas_choices=uas_choices)      
                     if uas_form.is_valid():
                         uas_form.save()                        
                         if save_conf == 'save_run_uas':
@@ -86,6 +83,8 @@ def index(request):
                                 return redirect('index')
                         
                         return redirect('index')
+                    else:
+                        logger.warning(uas_form.errors)
 
 
         elif 'send_signal' in request.POST:
@@ -95,11 +94,11 @@ def index(request):
             if send_signal == 'Kill':
                 try:
                     process = psutil.Process(int(pid))
-                    process.terminate()  # You can also use process.kill() for a more forceful termination
+                    process.terminate()  # can use process.kill() for a more forceful termination
                     process.wait(timeout=2)  # Wait for it to exit
                 except (psutil.NoSuchProcess, psutil.TimeoutExpired) as e:
                     logger.exception(e)
-                    pass  # The process with the given PID doesn't exist or already terminated
+                    pass
             
             elif send_signal == 'CheckOutput':
                 try:
@@ -110,7 +109,6 @@ def index(request):
                     mcalls = request.POST.get('mcalls')
                     process = psutil.Process(int(pid))
                     os.kill(process.pid, signal.SIGUSR2)
-                    # return redirect('display_sipp_screen', xml=xml_wo_ext, pid=pid, cport=cport)
                     return redirect(f'{reverse("display_sipp_screen", kwargs={"xml": xml_wo_ext, "pid": process.pid})}?cp={cport}&m={mcalls}')
 
                 
@@ -121,10 +119,10 @@ def index(request):
     # To make sure to form was not already loaded and avoid refreshing despite form errors
     if not uac_form:
         uac_config = UacAppConfig.objects.get(is_active_config=True)
-        uac_form = UACForm(instance=uac_config)
+        uac_form = UACForm(instance=uac_config, uac_choices = uac_choices)
     if not uas_form:
         uas_config = UasAppConfig.objects.get(is_active_config=True)
-        uas_form = UASForm(instance=uas_config)
+        uas_form = UASForm(instance=uas_config, uas_choices=uas_choices)
 
     uac_xml = uac_config.select_uac
     uas_xml = uas_config.select_uas

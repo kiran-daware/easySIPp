@@ -111,10 +111,13 @@ document.addEventListener('click', async (event) => {
         if (fileName) {
             await renderFile(fileName, container);
         }
+
         if (filename2) {
+            container2.style.display = "block"; // <-- Ensure it's visible again
             await renderFile(filename2, container2);
+        } else {
+            container2.style.display = "none";
         }
-        if (!filename2) { container2.style.display ="none" }
 
     }
 });

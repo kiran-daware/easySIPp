@@ -3,6 +3,7 @@
 <head>
     <title>easySIPp</title>
     {% load static %}
+    <link rel="icon" href="{% static 'favicon.ico' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'styles.css' %}">
 </head>
 <body>
@@ -40,7 +41,6 @@
                 <p>Dialed Number: {{UACForm.called_party_number}}{{UACForm.called_party_number.errors}}</p>
                 <p>Calling Party Number: {{UACForm.calling_party_number}}{{UACForm.calling_party_number.errors}}</p>
                 <p>Stun Server: {{UACForm.stun_server}}{{UACForm.stun_server.errors}}</p>
-                <!-- {{ moreOptionsForm.as_p }} -->
             </div>
             <button type="submit" name="save_conf" value="save_uac">Hide More Options</button>            
         </div>
@@ -190,7 +190,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     body: formData
                 }).then(response => {
                     if (response.ok) {
-                        window.location.reload();  // 🔁 Waits until POST finishes
+                        window.location.reload();  //Waits until POST finishes
                     } else {
                         console.error("Failed to POST selected key");
                     }
