@@ -25,7 +25,7 @@ class UACForm(forms.ModelForm):
     uac_remote_port = forms.IntegerField(label='UAC Remote Port', min_value=1024, max_value=65535, initial=5060)
     uac_local_addr = forms.GenericIPAddressField(label='Local Address', protocol='IPv4')
     src_port_uac = forms.IntegerField(label='UAC Src Port', min_value=1024, max_value=65535, initial=5060)
-    protocol_uac = forms.ChoiceField(label='UAC Protocol', choices=[('u1', 'UDP'), ('tn', 'TCP')])
+    protocol_uac = forms.ChoiceField(label='UAC Protocol', choices=[('u1', 'UDP'), ('t1', 'TCP')])
 
     # UAC XML Selection
     select_uac = forms.ChoiceField(label='Select UAC XML Scenario')
@@ -114,7 +114,7 @@ class UASForm(forms.ModelForm):
     uas_remote_port = forms.IntegerField(label='UAS Remote Port', min_value=1024, max_value=65535, initial=5060)
     uas_local_addr = forms.GenericIPAddressField(label='Local Address', protocol='IPv4')  # Optional if shared
     src_port_uas = forms.IntegerField(label='UAS Src Port', min_value=1024, max_value=65535, initial=5060)
-    protocol_uas = forms.ChoiceField(label='UAS Protocol', choices=[('u1', 'UDP'), ('tn', 'TCP')])
+    protocol_uas = forms.ChoiceField(label='UAS Protocol', choices=[('u1', 'UDP'), ('t1', 'TCP')])
 
     # UAS XML Selection
     select_uas = forms.ChoiceField(label='Select UAS XML Scenario')

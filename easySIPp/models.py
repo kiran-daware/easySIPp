@@ -8,7 +8,7 @@ class UacAppConfig(models.Model):
     uac_remote_port = models.PositiveIntegerField(default=5060)
     uac_local_addr = models.GenericIPAddressField(default='3.3.3.3')
     src_port_uac = models.PositiveIntegerField(default=5060)
-    protocol_uac = models.CharField(max_length=10, choices=[('u1', 'UDP'), ('tn', 'TCP')], default='u1')
+    protocol_uac = models.CharField(max_length=10, choices=[('u1', 'UDP'), ('t1', 'TCP')], default='u1')
 
     # More options form fields
     called_party_number = models.CharField(max_length=30, blank=True)
@@ -38,7 +38,7 @@ class UasAppConfig(models.Model):
     uas_remote_port = models.PositiveIntegerField(default=5060)
     uas_local_addr = models.GenericIPAddressField(default='3.3.3.3')
     src_port_uas = models.PositiveIntegerField(default=5062)
-    protocol_uas = models.CharField(max_length=10, choices=[('u1', 'UDP'), ('tn', 'TCP')], default='u1')
+    protocol_uas = models.CharField(max_length=10, choices=[('u1', 'UDP'), ('t1', 'TCP')], default='u1')
 
     is_active_config = models.BooleanField(default=False)
 
