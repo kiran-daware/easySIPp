@@ -15,8 +15,8 @@ class SippLogConsumer(AsyncWebsocketConsumer):
         self.pid = query_params.get("pid")[0]
         self.cport = query_params.get("cp")[0]
         self.running = True
-        appdir = str(settings.BASE_DIR)
-        self.log_file_path = f"{appdir}/{self.xml}_{self.pid}_screen.log"
+        self.appdir = str(settings.BASE_DIR)
+        self.log_file_path = f"{self.appdir}/{self.xml}_{self.pid}_screen.log"
         self.stream_task = asyncio.create_task(self.stream_logs())
 
     async def disconnect(self, close_code):
@@ -29,37 +29,34 @@ class SippLogConsumer(AsyncWebsocketConsumer):
 
     async def stream_logs(self):
         try:
-            # inial reading screen to avoid delay
-            with open(self.log_file_path, 'r') as f:
-                content = f.read()
-            await self.send(text_data=content)
-            await asyncio.sleep(0.8)
-            
+            proc = psutil.Process(int(self.pid))
             while self.running:
-                try:
-                    proc = psutil.Process(int(self.pid))
-                    if not proc.is_running() or proc.status() == psutil.STATUS_ZOMBIE:
-                        await self.send(text_data="[INFO] SIPp process has exited.")
-                        try:
-                            proc.wait(timeout=1)  # Reap if it's a zombie
-                        except psutil.TimeoutExpired:
-                            pass
-                        self.running = False
-                        break
-
-                except psutil.NoSuchProcess:
-                    await self.send(text_data="[INFO] SIPp process has exited.")
-                    self.running = False
+                if not proc.is_running() or proc.status() == psutil.STATUS_ZOMBIE:
+                    await self.send(text_data=f"[NotRunning] SIPp process with pid {self.pid} has exited.")
+                    exit_log = f"{self.appdir}/{self.xml}.xml.log"
+                    with open(exit_log, 'r') as f:
+                        content = f.read()
+                    await self.send(text_data=content)
+                    
+                    try:
+                        proc.wait(timeout=1)  # Reap if it's a zombie
+                    except psutil.TimeoutExpired:
+                        pass
+                    
                     break
 
-                os.kill(int(self.pid), signal.SIGUSR2)
-                await asyncio.sleep(1)
-                with open(self.log_file_path, 'r') as f:
-                    content = f.read()
-                await self.send(text_data=content)
+                else:
+                    os.kill(int(self.pid), signal.SIGUSR2)
+                    await asyncio.sleep(0.4)
+                    with open(self.log_file_path, 'r') as f:
+                        content = f.read()
+                    await self.send(text_data=content)
+                    await asyncio.sleep(0.8)
+
 
         except Exception as e:
             await self.send(text_data=f"[ERROR] Could not read screen log: {str(e)}")
+
 
 
     async def receive(self, text_data):

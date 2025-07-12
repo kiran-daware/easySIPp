@@ -108,7 +108,7 @@ def index(request):
                     cport = request.POST.get('cport')
                     mcalls = request.POST.get('mcalls')
                     process = psutil.Process(int(pid))
-                    os.kill(process.pid, signal.SIGUSR2)
+                    # os.kill(process.pid, signal.SIGUSR2)
                     return redirect(f'{reverse("display_sipp_screen", kwargs={"xml": xml_wo_ext, "pid": process.pid})}?cp={cport}&m={mcalls}')
 
                 

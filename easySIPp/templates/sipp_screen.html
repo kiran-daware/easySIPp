@@ -40,7 +40,7 @@
     ws.onopen = () => console.log('WebSocket opened');
     ws.onmessage = (event) => {
         const msg = event.data;
-        if (msg.startsWith("[INFO] SIPp process has exited.")) {
+        if (msg.startsWith("[NotRunning]")) {
             document.getElementById('responseContainer').textContent = msg;
             document.querySelectorAll('button').forEach(btn => btn.disabled = true);
         } else if (msg.startsWith("[ERROR]") || msg.startsWith("Sent key")) {
