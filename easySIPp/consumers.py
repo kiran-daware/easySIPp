@@ -27,16 +27,28 @@ class SippLogConsumer(AsyncWebsocketConsumer):
         except asyncio.CancelledError:
             pass
 
+
+    async def _send_log_content(self, file_path):
+        """Helper to read and send log content, handling file not found."""
+        try:
+            if not os.path.exists(file_path):
+                file_path = f"{self.appdir}/{self.xml}.xml.log"
+
+            with open(file_path, 'r') as f:
+                content = f.read()
+                await self.send(text_data=content)
+                
+        except Exception as e:
+            await self.send(text_data=f"[ERROR] Unexpected error reading log file {file_path}: {str(e)}")
+
+
     async def stream_logs(self):
         try:
             proc = psutil.Process(int(self.pid))
             while self.running:
                 if not proc.is_running() or proc.status() == psutil.STATUS_ZOMBIE:
                     await self.send(text_data=f"[NotRunning] SIPp process with pid {self.pid} has exited.")
-                    exit_log = f"{self.appdir}/{self.xml}.xml.log"
-                    with open(exit_log, 'r') as f:
-                        content = f.read()
-                    await self.send(text_data=content)
+                    await self._send_log_content(self.log_file_path)
                     
                     try:
                         proc.wait(timeout=1)  # Reap if it's a zombie
@@ -53,6 +65,10 @@ class SippLogConsumer(AsyncWebsocketConsumer):
                     await self.send(text_data=content)
                     await asyncio.sleep(0.8)
 
+
+        except psutil.NoSuchProcess:
+            await self.send(text_data=f"[NotRunning] SIPp process with pid {self.pid} has exited.")
+            await self._send_log_content(self.log_file_path)
 
         except Exception as e:
             await self.send(text_data=f"[ERROR] Could not read screen log: {str(e)}")
