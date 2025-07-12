@@ -51,10 +51,10 @@
 
 Get up and running in seconds using Docker:
 
-[![](https://img.shields.io/docker/pulls/krndwr/ksipp)](https://hub.docker.com/r/krndwr/ksipp)
+[![](https://img.shields.io/docker/pulls/krndwr/easysipp)](https://hub.docker.com/r/krndwr/easysipp)
 
 ```bash
-docker run -dt --network host --name ksipp krndwr/ksipp
+docker run -dt --network host --name easysipp krndwr/easysipp
 ```
 Once your container is up and running, open your browser and go to http://localhost:8080/ (or <your_linux/docker_IP>:8080)
 
@@ -83,13 +83,16 @@ This project is a work in progress and is provided **"as is"** without any warra
 ## 📸 Screenshots
 
 ### Main Dashboard & Test Execution
-![easySIPp - Web GUI for SIPp](https://raw.githubusercontent.com/kiran-daware/easySIPp/main/screenshot-1.png)
+![easySIPp - Web GUI for SIPp](/screenshots/easysipp_home.png)
+
+### Call flow preview before starting the tests
+![easySIPp - Call flow preview](/screenshots/easysipp_call_flow_preview.png)
 
 ### Realtime status check control of running SIPp calls
-![easySIPp - SIPp control and real-time status](https://raw.githubusercontent.com/kiran-daware/easySIPp/main/screenshot-4.png)
+![easySIPp - SIPp control and real-time status](/screenshots/easysipp_control_screen.png)
 
-### SIP Call Flow Visualization
-![easySIPp - XML flow diagram](https://raw.githubusercontent.com/kiran-daware/easySIPp/main/screenshot-2.png)
+### Predefined SIPp XML scnarios
+![easySIPp - Predefined SIPp XML scenarios](/screenshots/easysipp_xml_list.png)
 
 ### SIPp XML Scenario Generator
-![easySIPp - XML Scenario generator](https://raw.githubusercontent.com/kiran-daware/easySIPp/main/screenshot-3.png)
+![easySIPp - XML Scenario generator](/screenshots/easysipp_xml_builder.png)
