@@ -91,7 +91,7 @@ LOGGING = {
     },
     'handlers': {
         'file': {
-            'level': 'DEBUG' if DEBUG else 'WARNING',
+            'level': 'DEBUG' if DEBUG else 'INFO',
             'class': 'logging.handlers.RotatingFileHandler',
             'filename': 'debug.log',
             'formatter': 'verbose',
@@ -101,12 +101,12 @@ LOGGING = {
     },
     'root': {
         'handlers': ['file'],
-        'level': 'DEBUG' if DEBUG else 'WARNING',
+        'level': 'DEBUG' if DEBUG else 'INFO',
     },
     'loggers': {
         'django': {
             'handlers': ['file'],
-            'level': 'DEBUG' if DEBUG else 'WARNING',
+            'level': 'DEBUG' if DEBUG else 'INFO',
         },
         'django.server': {
             'handlers': ['file'],

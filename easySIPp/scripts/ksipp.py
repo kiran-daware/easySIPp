@@ -1,6 +1,6 @@
 from django.conf import settings
 from django.http import HttpResponse
-import os, shlex, socket, time
+import os, shlex, socket, time, datetime
 import subprocess
 from .kstun import get_ip_info
 from .modify import tmpXmlBehindNAT, modifynumberxmlpath
@@ -165,4 +165,27 @@ def cleanFilename(filename):
     cleaned_filename = re.sub(r'[^\w\-\.]', '', cleaned_filename)
     return cleaned_filename
 
+
+
+def delete_old_screen_logs(directory):
+    # Calculate the threshold for 1 hour ago
+    hours_old = 1
+    threshold = datetime.datetime.now() - datetime.timedelta(hours=hours_old)
+
+    for filename in os.listdir(directory):
+        filepath = os.path.join(directory, filename)
+
+        # Check if it's a file and ends with the specified suffix
+        if os.path.isfile(filepath) and (filename.endswith("screen.log") or filename.endswith("xml.log")):
+            try:
+                modification_time = datetime.datetime.fromtimestamp(os.path.getmtime(filepath))
+
+                if modification_time < threshold:
+                    os.remove(filepath)
+                    logger.info(f"Deleted: {filepath}")
+                else:
+                    logger.debug(f"NotDeleted: {filepath}")
+
+            except OSError as e:
+                logger.exception(f"Error deleting {filepath}: {e}")
 

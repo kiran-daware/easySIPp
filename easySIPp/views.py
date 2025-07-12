@@ -7,7 +7,7 @@ from django.contrib import messages
 from .forms import UACForm, UASForm
 from .forms import xmlUploadForm
 from .models import UacAppConfig, UasAppConfig
-from .scripts.ksipp import get_sipp_processes, cleanFilename, run_uac, run_uas
+from .scripts.ksipp import get_sipp_processes, cleanFilename, run_uac, run_uas, delete_old_screen_logs
 from .scripts.list import listXmlFiles
 import xml.etree.ElementTree as ET
 import os, signal
@@ -197,6 +197,10 @@ def xmlEditor(request):
 
 
 def sipp_screen(request, pid, xml):
+
+    log_dir = settings.BASE_DIR
+    delete_old_screen_logs(log_dir)
+
     cport = request.GET.get('cp')
     mcalls = request.GET.get('m')
     context = {
@@ -206,9 +210,7 @@ def sipp_screen(request, pid, xml):
         'mcalls': mcalls,
         }
     return render(request, 'sipp_screen.html', context)
-
     
-
 
 def create_scenario_xml_view(request):
     if request.method == 'POST':
