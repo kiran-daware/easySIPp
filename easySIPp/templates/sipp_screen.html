@@ -35,7 +35,9 @@
     const pid = "{{ pid }}";
     const xml = "{{ xml }}"
     const cport = "{{ cport }}"
-    const ws = new WebSocket('ws://localhost:8000/ws/sipp_logs/?xml=' + xml +'&pid=' + pid + '&cp=' + cport);
+    const currentAddr = window.location.host;
+    const wsUrl = 'ws://' + currentAddr + '/ws/sipp_logs/?xml=' + xml +'&pid=' + pid + '&cp=' + cport
+    const ws = new WebSocket(wsUrl);
 
     ws.onopen = () => console.log('WebSocket opened');
     ws.onmessage = (event) => {
