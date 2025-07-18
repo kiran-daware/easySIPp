@@ -33,7 +33,7 @@ COPY . .
 # Download and install SIPp binary
 RUN curl -L -o easySIPp/sipp ${SIPP_BIN_URL} && \
     chmod +x easySIPp/sipp && \
-    setcap cap_net_raw=ep easySIPp/sipp
+    setcap cap_net_raw+eip easySIPp/sipp
 
 # Create /app/easySIPp/xml/tmp dir for tmp xml modification internally
 RUN mkdir -p easySIPp/xml/tmp easySIPp/xml/backup && \
