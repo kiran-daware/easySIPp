@@ -1,4 +1,4 @@
-# Use an official Python base image with a specific version
+# official Python base image with debian 12 bookworm
 FROM python:3.13-slim-bookworm
 
 # Set environment variables
@@ -12,10 +12,6 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 RUN apt-get update && \
     apt-get install -y libcap2-bin nginx curl && \
     rm -rf /var/lib/apt/lists/*
-
-# Create non-root user
-RUN addgroup --gid 1234 kuser && \
-    adduser --system --uid 5678 --gid 1234 --disabled-password --gecos "" kuser
 
 # Set working directory
 WORKDIR $APP_HOME
@@ -31,8 +27,6 @@ COPY . .
 # Download and install SIPp binary
 RUN curl -L -o easySIPp/sipp ${SIPP_BIN_URL} && \
     chmod +x easySIPp/sipp
-# separate RUN for setcap as it sometimes did not work when combined with above RUN.    
-RUN setcap cap_net_raw+eip easySIPp/sipp
 
 # Create /app/easySIPp/xml/tmp dir for tmp xml modification internally
 RUN mkdir -p easySIPp/xml/tmp easySIPp/xml/backup && \
@@ -41,9 +35,16 @@ RUN mkdir -p easySIPp/xml/tmp easySIPp/xml/backup && \
 # Collect static files
 RUN python manage.py collectstatic --noinput
 
+# Create non-root user
+RUN addgroup --gid 1234 kuser && \
+    adduser --system --uid 5678 --gid 1234 --disabled-password --gecos "" kuser
+
 # Set ownership and permissions
 RUN chown -R kuser:kuser $APP_HOME && \
     chown -R kuser:kuser /var/lib/nginx /var/log/nginx /run
+
+# separate RUN for setcap as it sometimes did not work when combined with above RUN.    
+RUN setcap cap_net_raw+eip $APP_HOME/easySIPp/sipp
 
 # Nginx configuration
 COPY easysipp-nginx.conf /etc/nginx/sites-available/
