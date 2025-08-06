@@ -8,7 +8,7 @@ baseDir = xmlPath = str(settings.BASE_DIR)
 logger = logging.getLogger(__name__)
 
 
-def tmpXmlBehindNAT(xml, externalIp, externalPort):
+def tmp_xml_behind_nat(xml, externalIp, externalPort):
     xmlPath = str(settings.BASE_DIR / 'easySIPp' / 'xml' / xml)
     with open(xmlPath, 'r') as file:
         xml_content = file.read()
@@ -31,7 +31,7 @@ def tmpXmlBehindNAT(xml, externalIp, externalPort):
 
 # code for modifying Calling party number and dialed number if any one is present
 
-def modifynumberxmlpath(xmlPath, calling_number, dialed_number):
+def modify_number_xml_path(xmlPath, calling_number, dialed_number):
 
     with open(xmlPath, 'r') as file:
         xml_content = file.read()
