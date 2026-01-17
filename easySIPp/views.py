@@ -7,8 +7,8 @@ from django.contrib import messages
 from .forms import UACForm, UASForm
 from .forms import xmlUploadForm
 from .models import UacAppConfig, UasAppConfig
-from .scripts.ksipp import get_sipp_processes, cleanFilename, run_uac, run_uas, delete_old_screen_logs
-from .scripts.list import listXmlFiles
+from .scripts.ksipp import get_sipp_processes, clean_filename, run_uac, run_uas, delete_old_screen_logs
+from .scripts.list import list_xml_files
 import xml.etree.ElementTree as ET
 import os, signal
 import psutil
@@ -23,8 +23,8 @@ def index(request):
     showMoreOptionsForm = False
     uac_form = None
     uas_form = None
-    uac_choices = UacAppConfig.objects.values_list('uac_key', 'uac_config_name')
-    uas_choices = UasAppConfig.objects.values_list('uas_key', 'uas_config_name')
+    uac_choices = list(UacAppConfig.objects.values_list('uac_key', 'uac_config_name'))
+    uas_choices = list(UasAppConfig.objects.values_list('uas_key', 'uas_config_name'))
 
     if request.method == 'POST':
         if 'selected_key' in request.POST:
@@ -58,7 +58,6 @@ def index(request):
                             sipp_error = run_uac(uac_config)
                             if sipp_error:
                                 messages.error(request, sipp_error)
-                                return redirect('index')
                         
                         return redirect('index')
 
@@ -80,7 +79,6 @@ def index(request):
                             sipp_error = run_uas(uas_config)
                             if sipp_error:
                                 messages.error(request, sipp_error)
-                                return redirect('index')
                         
                         return redirect('index')
                     else:
@@ -148,14 +146,14 @@ def index(request):
 ######## Index End ############
 
 
-def serveXmlFile(request, xmlname):
+def serve_xml_file(request, xmlname):
     xmlPath = str(settings.BASE_DIR / 'easySIPp' / 'xml' / xmlname)
     with open(xmlPath, 'r') as file:
         xmlContent = file.read()
     return HttpResponse(xmlContent, content_type='text/plain')
 
 
-def xmlEditor(request):
+def xml_editor(request):
     if request.method == 'GET':
         xmlName=request.GET.get('xml')
         referer=request.GET.get('back', 'index')
@@ -178,7 +176,7 @@ def xmlEditor(request):
         elif save_type == 'save_as': 
             uacuas = 'uac' if xmlName.startswith('uac') else ('uas' if xmlName.startswith('uas') else None)
             savingXmlName = f'{uacuas}_{new_xml_name}.xml'
-            savingXmlName = cleanFilename(savingXmlName)
+            savingXmlName = clean_filename(savingXmlName)
         else:  return redirect(referer)
 
         with open(os.path.join(settings.BASE_DIR, 'easySIPp', 'xml', savingXmlName), 'w', encoding='utf-8') as file:
@@ -216,7 +214,7 @@ def create_scenario_xml_view(request):
     if request.method == 'POST':
         xmlContent=request.POST.get('xml_content')
         fileName=request.POST.get('file_name')
-        cleanedFilename = cleanFilename(fileName)
+        cleanedFilename = clean_filename(fileName)
         with open(os.path.join(settings.BASE_DIR, 'easySIPp', 'xml', cleanedFilename), 'w', encoding='utf-8') as file:
             file.write(xmlContent)
     
@@ -238,7 +236,7 @@ def xml_mgmt_view(request):
             xmlUploadF = xmlUploadForm(request.POST, request.FILES)
             if xmlUploadF.is_valid():
                 uploaded_file = request.FILES['file']
-                cleaned_filename = cleanFilename(uploaded_file.name)
+                cleaned_filename = clean_filename(uploaded_file.name)
                 file_path = os.path.join(xmlDir, cleaned_filename)
                 
                 # Validate the uploaded XML file
@@ -260,7 +258,7 @@ def xml_mgmt_view(request):
         if os.path.exists(deleteXmlPath):
             os.remove(deleteXmlPath)
         
-    uacList, uasList = listXmlFiles(xmlDir)
+    uacList, uasList = list_xml_files(xmlDir)
     context = {
         'uac_list':uacList, 'uas_list':uasList,
         'xml_upload_form': xmlUploadF,

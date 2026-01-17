@@ -3,7 +3,7 @@ from django.http import HttpResponse
 import os, shlex, socket, time, datetime
 import subprocess
 from .kstun import get_ip_info
-from .modify import tmpXmlBehindNAT, modifynumberxmlpath
+from .modify import tmp_xml_behind_nat, modify_number_xml_path
 import psutil, os, re
 import logging
 
@@ -16,7 +16,7 @@ def stun4nat(xmlName, srcPort, stunServer):
     stun_host_str = ''.join(stunServer)
     nat_type, external_ip, external_port = get_ip_info(stun_host=stun_host_str, source_port=int(srcPort))
     if external_ip is not None and external_port is not None:
-        newXmlPath = tmpXmlBehindNAT(xmlName, external_ip, external_port)
+        newXmlPath = tmp_xml_behind_nat(xmlName, external_ip, external_port)
     else:
         return None
     return newXmlPath
@@ -63,7 +63,7 @@ def run_uac(uac_config):
             else: return HttpResponse(f'Stun server at {stun_server} is not responding!')
 
         if dialed_number or calling_number:
-            uacXmlPath = modifynumberxmlpath(uacXmlPath, calling_number, dialed_number)
+            uacXmlPath = modify_number_xml_path(uacXmlPath, calling_number, dialed_number)
 
         uacCommand = f"{sipp} -sf {uacXmlPath} {uac_remote} {uacSrc} -m {noOfCalls} -r {cps} -t {protocol_uac}"
         outputFile = f'{uacXml}.log'
@@ -158,7 +158,7 @@ def get_sipp_processes():
     sorted_sipp_processes = sorted(sipp_processes, key=lambda x: x['pid'], reverse=True)
     return sorted_sipp_processes
 
-def cleanFilename(filename):
+def clean_filename(filename):
     # Replace spaces with underscores
     cleaned_filename = filename.replace(' ', '_')
     # Remove any characters that are not alphanumeric, underscores, hyphens, or periods
