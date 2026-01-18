@@ -11,9 +11,9 @@ from .models import UacAppConfig, UasAppConfig
 from .scripts.ksipp import get_sipp_processes, clean_filename, run_uac, run_uas, delete_old_screen_logs
 from .scripts.list import list_xml_files
 import xml.etree.ElementTree as ET
-import os, signal
 import psutil
 import logging
+from pathlib import Path
 
 logger = logging.getLogger(__name__)
 
@@ -119,7 +119,6 @@ def index(request):
                     cport = request.POST.get('cport')
                     mcalls = request.POST.get('mcalls')
                     process = psutil.Process(int(pid))
-                    # os.kill(process.pid, signal.SIGUSR2)
                     return redirect(f'{reverse("display_sipp_screen", kwargs={"xml": xml_wo_ext, "pid": process.pid})}?cp={cport}&m={mcalls}')
 
                 
@@ -160,20 +159,21 @@ def index(request):
 
 
 def serve_xml_file(request, xmlname):
-    xmlPath = str(settings.BASE_DIR / 'easySIPp' / 'xml' / xmlname)
-    with open(xmlPath, 'r') as file:
+    xml_path = Path(settings.BASE_DIR) / 'easySIPp' / 'xml' / xmlname
+    with open(xml_path, 'r') as file:
         xmlContent = file.read()
     return HttpResponse(xmlContent, content_type='text/plain')
 
 
 def xml_editor(request):
+    xml_path = Path(settings.BASE_DIR) / 'easySIPp' / 'xml'
     if request.method == 'GET':
         xmlName=request.GET.get('xml')
         referer=request.GET.get('back', 'index')
         if xmlName is None:
             return HttpResponse('No xml selected <a href="/xml-management/">Select here!</a>')
-        xmlPath = str(settings.BASE_DIR / 'easySIPp' / 'xml' / xmlName)
-        with open(xmlPath, 'r') as file:
+
+        with open(xml_path / xmlName, 'r', encoding='utf-8') as file:
             xmlContent = file.read()
 
     if request.method == 'POST':
@@ -191,17 +191,24 @@ def xml_editor(request):
             savingXmlName = f'{uacuas}_{new_xml_name}.xml'
             savingXmlName = clean_filename(savingXmlName)
         else:  return redirect(referer)
+        
+        # if file name already exists, do not overwrite, show error
+        if save_type == 'save_as' and (xml_path / savingXmlName).exists():
+            error_msg = f"File '{savingXmlName}' already exists. Choose a different name."
+            save_type = False
+        
+        else:
+            with open(xml_path / savingXmlName, 'w', encoding='utf-8') as file:
+                file.write(xmlContent)
 
-        with open(os.path.join(settings.BASE_DIR, 'easySIPp', 'xml', savingXmlName), 'w', encoding='utf-8') as file:
-            file.write(xmlContent)
-
-        xmlName = savingXmlName
+            xmlName = savingXmlName
 
     
     context = {
         'xml_content':xmlContent,
         'xml_name':xmlName,
         'save': save_type if 'save_type' in locals() else False,
+        'error_msg': error_msg if 'error_msg' in locals() else False,
         'referer': referer if 'referer' in locals() else False,
     }
     return render(request, 'xml_editor.html', context)
@@ -228,7 +235,8 @@ def create_scenario_xml_view(request):
         xmlContent=request.POST.get('xml_content')
         fileName=request.POST.get('file_name')
         cleanedFilename = clean_filename(fileName)
-        with open(os.path.join(settings.BASE_DIR, 'easySIPp', 'xml', cleanedFilename), 'w', encoding='utf-8') as file:
+        xml_dir = Path(settings.BASE_DIR) / 'easySIPp' / 'xml'
+        with open(xml_dir / cleanedFilename, 'w', encoding='utf-8') as file:
             file.write(xmlContent)
     
     context = {
@@ -240,7 +248,7 @@ def create_scenario_xml_view(request):
 
 
 def xml_mgmt_view(request):
-    xmlDir = os.path.join(settings.BASE_DIR, 'easySIPp', 'xml')
+    xml_dir = Path(settings.BASE_DIR) / 'easySIPp' / 'xml'
     xmlUploadF = xmlUploadForm()
 
     if request.method == 'POST' and 'submitType' in request.POST:
@@ -250,28 +258,32 @@ def xml_mgmt_view(request):
             if xmlUploadF.is_valid():
                 uploaded_file = request.FILES['file']
                 cleaned_filename = clean_filename(uploaded_file.name)
-                file_path = os.path.join(xmlDir, cleaned_filename)
+                file_path = xml_dir / cleaned_filename
                 
                 # Validate the uploaded XML file
-                try:
-                    with open(file_path, 'wb+') as destination:
-                        for chunk in uploaded_file.chunks():
-                            destination.write(chunk)
-                    tree = ET.parse(file_path)
-                    uploadMsg = f"File '{cleaned_filename}' uploaded successfully."
+                # if file name already exists, do not overwrite, show error
+                if file_path.exists():
+                    uploadMsg = f"File '{cleaned_filename}' already exists. Rename your file and try again."
+                 
+                else:
+                    try:
+                        with open(file_path, 'wb+') as destination:
+                            for chunk in uploaded_file.chunks():
+                                destination.write(chunk)
+                        tree = ET.parse(str(file_path))
+                        uploadMsg = f"File '{cleaned_filename}' uploaded successfully."
                     
-                except ET.ParseError as e:
-                    os.remove(file_path)  # Remove the invalid file
-                    uploadMsg = f"Invalid XML file '{uploaded_file.name}': {e}"
-
+                    except ET.ParseError as e:
+                        file_path.unlink(missing_ok=True)
+                        uploadMsg = f"Invalid XML file '{uploaded_file.name}': {e}"
 
     if request.method =='GET' and 'delete' in request.GET:
         deleteXmlName=request.GET.get('delete')
-        deleteXmlPath = os.path.join(xmlDir, deleteXmlName)
-        if os.path.exists(deleteXmlPath):
-            os.remove(deleteXmlPath)
+        deleteXmlPath = xml_dir / deleteXmlName
+        if deleteXmlPath.exists():
+            deleteXmlPath.unlink()
         
-    uacList, uasList = list_xml_files(xmlDir)
+    uacList, uasList = list_xml_files(str(xml_dir))
     context = {
         'uac_list':uacList, 'uas_list':uasList,
         'xml_upload_form': xmlUploadF,
