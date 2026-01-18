@@ -76,8 +76,8 @@ def run_uac(uac_config):
             outputFilePath = os.path.join(settings.BASE_DIR, outputFile)
             with open(outputFilePath, 'r') as file:
                 lines = file.readlines()
-                last_lines = lines[-8:]
-                sipp_error = ''.join(last_lines)
+                # last_lines = lines[-18:]
+                sipp_error = ''.join(lines)
                 logger.error(sipp_error)
                 return sipp_error
 
@@ -114,8 +114,8 @@ def run_uas(uas_config):
             with open(outputFilePath, 'r') as file:
                 lines = file.readlines()
                 # Extract the last 'num_lines' lines from the list
-                last_lines = lines[-14:]
-                sipp_error = ''.join(last_lines)
+                # last_lines = lines[-14:]
+                sipp_error = ''.join(lines)
                 return sipp_error
             
     except Exception as e:
