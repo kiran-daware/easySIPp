@@ -1,5 +1,6 @@
 from django.http import HttpResponse
 from django.views.decorators.cache import never_cache
+from django.core.management import call_command
 from django.shortcuts import render, redirect
 from django.conf import settings
 from django.urls import reverse
@@ -25,6 +26,18 @@ def index(request):
     uas_form = None
     uac_choices = list(UacAppConfig.objects.values_list('uac_key', 'uac_config_name'))
     uas_choices = list(UasAppConfig.objects.values_list('uas_key', 'uas_config_name'))
+
+    # If database is empty, load initial data automatically
+    if not uac_choices or not uas_choices:
+        try:
+            call_command('load_initial_if_empty')
+            messages.success(request, 'Initial data loaded successfully!')
+            # Refresh the choices after loading
+            uac_choices = list(UacAppConfig.objects.values_list('uac_key', 'uac_config_name'))
+            uas_choices = list(UasAppConfig.objects.values_list('uas_key', 'uas_config_name'))
+        except Exception as e:
+            messages.error(request, f'Error loading initial data: {str(e)}')
+            return render(request, 'index.html', {})
 
     if request.method == 'POST':
         if 'selected_key' in request.POST:
