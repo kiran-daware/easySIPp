@@ -6,6 +6,9 @@
 
 *, *::before, *::after {
   box-sizing: border-box;
+  font-family: inherit;
+  font-size: inherit; 
+  line-height: inherit;
 }
 
 body {
@@ -13,6 +16,7 @@ body {
   color: var(--light-color);
   margin: 10px;
   font-family: Verdana, sans-serif;
+  font-size: 14px;
 }
 
 h1 a {
@@ -31,7 +35,6 @@ h1 a {
 .navbar {
   display: flex;
   align-items: end;
-  margin-bottom: 14px;
   border-bottom: 4px solid #71695e;
 }
 
@@ -112,6 +115,18 @@ h1 a {
   color: #ffffff;
 }
 
+.kbutton.active {
+  background-color: #71695e;
+  color: #ffffff;
+}
+
+.kbutton:disabled, .kbutton[disabled] {
+  background-color: #e0e0e0;
+  color: #a0a0a0;
+  border-color: #c0c0c0;
+  cursor: not-allowed;
+}
+
 .xmlname {color:#331d0c;}
 
 
@@ -179,30 +194,31 @@ ul {
   list-style-type: none;
 }
 
-#xml-lists li {
-  padding: 8px 10px;
+.xml-pcap-lists li {
+  padding: 5px 10px;
   transition: transform .2s;
   display: flex;
   flex-wrap: wrap;
 }
-#xml-lists li:nth-child(odd) {
+.xml-pcap-lists li:nth-child(odd) {
   background-color: #f1f1f1;
 }
-#xml-lists li:nth-child(even) {
+.xml-pcap-lists li:nth-child(even) {
   background-color: #eaeaea;
 }
-#xml-lists li:hover{background-color: #ffffff; transform: scale(1.04);} 
+.xml-pcap-lists li:hover{background-color: #ffffff; transform: scale(1.04);} 
 
 .selected{background-color: #71695e !important; color: #f1f1f1 !important;}
 .selected a {color: #f1f1f1;}
 .selected a:hover {color: #ffffff;}
 
-#xml-lists {display: flex; margin-top: 14px;}
-#xml-lists ul {padding:0; margin: 0;flex:1}
+.xml-pcap-lists {display: flex; margin-top: 14px;}
+.xml-pcap-lists ul {padding:0; margin: 0;flex:1}
+
 #uas-list {margin-left: 5px!important;}
 #xml-flow {min-height: 100vh; background-color: beige;text-align: center; flex:1; margin-left: 5px;}
 .show-flow {cursor: default;}
-#xml-lists li span {padding: 2px 7px 2px 0;}
+.xml-pcap-lists li span {padding: 2px 7px 2px 0;}
 
 /* Rename below buttons to  */
 .xml-li-button {
@@ -229,17 +245,27 @@ ul {
   cursor: pointer;
 }
 
-#options-container {
-  width: 100%;
-  background-color: #f0f0f0;
-  justify-content: center;
-  align-items: center;
-}
-
-#buttons {
+.submenu-buttons {
+  background: #d2d2d2;
   display: flex;
   justify-content: center;
   align-items: center;
   gap: 10px;
+  padding: 5px;
 }
+
+/* transition dropdown to visible when clicked on PCAP media button  */
+.submenu-dropdown {
+  border-bottom: 1px solid #3b3b3b;
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: max-height 0.3s ease, opacity 0.3s ease;
+}
+
+.submenu-dropdown.active {
+  max-height: 500px;
+  opacity: 1;
+}
+
 

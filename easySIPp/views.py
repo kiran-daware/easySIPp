@@ -9,7 +9,7 @@ from .forms import UACForm, UASForm
 from .forms import xmlUploadForm
 from .models import UacAppConfig, UasAppConfig
 from .scripts.ksipp import get_sipp_processes, clean_filename, run_uac, run_uas, delete_old_screen_logs
-from .scripts.list import list_xml_files
+from .scripts.list import list_xml_files, list_pcap_files
 import xml.etree.ElementTree as ET
 import psutil
 import logging
@@ -249,6 +249,7 @@ def create_scenario_xml_view(request):
 
 def xml_mgmt_view(request):
     xml_dir = Path(settings.BASE_DIR) / 'easySIPp' / 'xml'
+    pcap_dir = Path(settings.BASE_DIR) / 'easySIPp' / 'xml' / 'pcap'
     xmlUploadF = xmlUploadForm()
 
     if request.method == 'POST' and 'submitType' in request.POST:
@@ -284,8 +285,9 @@ def xml_mgmt_view(request):
             deleteXmlPath.unlink()
         
     uacList, uasList = list_xml_files(str(xml_dir))
+    pcap_audio_list = list_pcap_files(str(pcap_dir))
     context = {
-        'uac_list':uacList, 'uas_list':uasList,
+        'uac_list':uacList, 'uas_list':uasList, 'pcap_audio_list': pcap_audio_list,
         'xml_upload_form': xmlUploadF,
         'upload_msg': uploadMsg if 'uploadMsg' in locals() else False,
         }
