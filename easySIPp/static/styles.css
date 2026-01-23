@@ -189,6 +189,10 @@ h1 a {
 }
 
 
+.errorlist {
+  color: red;
+}
+
 
 ul {
   list-style-type: none;

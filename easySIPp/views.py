@@ -278,11 +278,18 @@ def xml_mgmt_view(request):
                         file_path.unlink(missing_ok=True)
                         uploadMsg = f"Invalid XML file '{uploaded_file.name}': {e}"
 
-    if request.method =='GET' and 'delete' in request.GET:
-        deleteXmlName=request.GET.get('delete')
-        deleteXmlPath = xml_dir / deleteXmlName
-        if deleteXmlPath.exists():
-            deleteXmlPath.unlink()
+    if request.method =='GET':
+        if 'delete-xml' in request.GET:
+            deleteXmlName=request.GET.get('delete-xml')
+            deleteXmlPath = xml_dir / deleteXmlName
+            if deleteXmlPath.exists():
+                deleteXmlPath.unlink()
+        
+        if 'delete-pcap' in request.GET:
+            deletePcapName=request.GET.get('delete-pcap')
+            deletePcapPath = pcap_dir / deletePcapName
+            if deletePcapPath.exists():
+                deletePcapPath.unlink()
         
     uacList, uasList = list_xml_files(str(xml_dir))
     pcap_audio_list = list_pcap_files(str(pcap_dir))

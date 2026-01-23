@@ -26,7 +26,7 @@
                 <h3>Upload new xml</h3>
                 <form method="post" enctype="multipart/form-data">
                     {% csrf_token %}
-                    <p>{% if upload_msg %}{{ upload_msg }}{% endif %}</p>
+                    <p class="errorlist">{% if upload_msg %}{{ upload_msg }}{% endif %}</p>
                     {% if xml_upload_form.file.errors %}
                     <ul class="errorlist">
                         {% for error in xml_upload_form.file.errors %}
