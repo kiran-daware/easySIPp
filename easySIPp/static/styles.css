@@ -221,7 +221,7 @@ ul {
 .selected a {color: #f1f1f1;}
 .selected a:hover {color: #ffffff;}
 
-.xml-pcap-lists {display: flex; margin-top: 14px;}
+.xml-pcap-lists {display: flex;}
 .xml-pcap-lists ul {padding:0; margin: 0;flex:1}
 
 #uas-list {margin-left: 5px!important;}
@@ -265,7 +265,7 @@ ul {
 
 /* transition dropdown to visible when clicked on PCAP media button  */
 .submenu-dropdown {
-  border-bottom: 1px solid #3b3b3b;
+  border-bottom: 2px solid #3b3b3b;
   max-height: 0;
   overflow: hidden;
   opacity: 0;

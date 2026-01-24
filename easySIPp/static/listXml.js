@@ -1,34 +1,35 @@
 const uacXmlList = document.getElementById('uac-list');
 const uasXmlList = document.getElementById('uas-list');
 const pcapAudioList = document.getElementById('pcap_audio_list');
+const csvList = document.getElementById('csv_list');
 
 
-function createPcapListItem(pcapName){
+function createPcapCsvListItem(fileName){
     const listItem = document.createElement('li');
     const spanElm = document.createElement('span');
-    spanElm.textContent = `${pcapName} `;
-    spanElm.setAttribute('data-filename', pcapName);
+    spanElm.textContent = `${fileName} `;
+    spanElm.setAttribute('data-filename', fileName);
 
     // Download link
     const downloadLink = document.createElement('a');
-    downloadLink.href = `/download/${pcapName}`;
-    downloadLink.download = pcapName; 
+    downloadLink.href = `/download/${fileName}`;
+    downloadLink.download = fileName; 
     downloadLink.className = 'xml-li-button';
     downloadLink.title = 'Download';
     downloadLink.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" height="16px" width="16px" fill="currentColor"><path d="M288 32c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 242.7-73.4-73.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l128 128c12.5 12.5 32.8 12.5 45.3 0l128-128c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L288 274.7 288 32zM64 352c-35.3 0-64 28.7-64 64l0 32c0 35.3 28.7 64 64 64l384 0c35.3 0 64-28.7 64-64l0-32c0-35.3-28.7-64-64-64l-101.5 0-45.3 45.3c-25 25-65.5 25-90.5 0L165.5 352 64 352zm368 56a24 24 0 1 1 0 48 24 24 0 1 1 0-48z"/></svg>`;
 
     // Delete button 
     const deletePcap = document.createElement('a');
-    deletePcap.href = `/xml-management/?delete-pcap=${pcapName}`;
+    deletePcap.href = `/xml-management/?delete-pcap=${fileName}`;
     deletePcap.className = 'xml-li-button';
     deletePcap.title = 'Delete';
     deletePcap.onclick = function() {
-        return confirm(`Not working Yet! \n Are you sure you want to delete this file: ${pcapName}?`);
+        return confirm(`Are you sure you want to delete this file: ${fileName}?`);
     };
     deletePcap.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" height="16px" width="16px" fill="currentColor"><path d="M135.2 17.7L128 32 32 32C14.3 32 0 46.3 0 64S14.3 96 32 96l384 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-96 0-7.2-14.3C307.4 6.8 296.3 0 284.2 0L163.8 0c-12.1 0-23.2 6.8-28.6 17.7zM416 128L32 128 53.2 467c1.6 25.3 22.6 45 47.9 45l245.8 0c25.3 0 46.3-19.7 47.9-45L416 128z"/></svg>`;
 
 
-    listItem.setAttribute('data-filename', pcapName);
+    listItem.setAttribute('data-filename', fileName);
     listItem.addEventListener('click', () => {
         document.querySelectorAll('li').forEach(li => li.classList.remove('selected'));
         listItem.classList.add('selected');
@@ -42,9 +43,13 @@ function createPcapListItem(pcapName){
 };
 
 pcapAudioFiles.forEach(file => {
-    const listItem = createPcapListItem(file);
-    console.log(listItem);
+    const listItem = createPcapCsvListItem(file);
     pcapAudioList.appendChild(listItem);
+});
+
+csvFiles.forEach(file => {
+    const listItem = createPcapCsvListItem(file);
+    csvList.appendChild(listItem);
 });
 
 
@@ -231,25 +236,25 @@ document.addEventListener('click', async (event) => {
     if (event.target && event.target.id === 'upload-xml-b') {
         document.getElementById('upload-modal').style.display = 'block';
     }
-
-// Toggle PCAP media dropdown
-    if (event.target && event.target.id === 'pcap-media-b') {
-        const dropdown = document.getElementById('xml-mgmt-dropdown-list');
-        const button = event.target;
-        dropdown.classList.toggle('active');
-        button.classList.toggle('active');
-        // also hide upon clicking outside the dropdown
-        window.onclick = function(event) {
-            const isClickInDropdown = event.target.closest('#xml-mgmt-dropdown-list');
-            const isClickOnButton = event.target.closest('#pcap-media-b');
-            
-            if (!isClickInDropdown && !isClickOnButton) {
-                if (dropdown.classList.contains('active')) {
-                    dropdown.classList.remove('active');
-                    button.classList.remove('active');
-                }
-            }
-        }
-    }
 });
+
+// Reusable dropdown toggle function
+function setupDropdownToggle(buttonId, dropdownId) {
+    document.addEventListener('click', (event) => {
+        const button = document.getElementById(buttonId);
+        const dropdown = document.getElementById(dropdownId);
+        
+        if (event.target === button) {
+            dropdown.classList.toggle('active');
+            button.classList.toggle('active');
+        } else if (!event.target.closest(`#${dropdownId}`) && !event.target.closest(`#${buttonId}`)) {
+            dropdown.classList.remove('active');
+            button.classList.remove('active');
+        }
+    });
+}
+
+// Initialize both dropdowns
+setupDropdownToggle('pcap-media-b', 'pcap_audio_list');
+setupDropdownToggle('csv-list-b', 'csv_list');
 

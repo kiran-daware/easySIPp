@@ -9,7 +9,7 @@ from .forms import UACForm, UASForm
 from .forms import xpcUploadForm
 from .models import UacAppConfig, UasAppConfig
 from .scripts.ksipp import get_sipp_processes, clean_filename, run_uac, run_uas, delete_old_screen_logs
-from .scripts.list import list_xml_files, list_pcap_files
+from .scripts.list import list_xml_files, list_pcap_files, list_csv_files
 import xml.etree.ElementTree as ET
 import psutil
 import logging
@@ -325,8 +325,9 @@ def xml_mgmt_view(request):
         
     uacList, uasList = list_xml_files(str(xml_dir))
     pcap_audio_list = list_pcap_files(str(pcap_dir))
+    csv_list = list_csv_files(str(csv_dir))
     context = {
-        'uac_list':uacList, 'uas_list':uasList, 'pcap_audio_list': pcap_audio_list,
+        'uac_list':uacList, 'uas_list':uasList, 'pcap_audio_list': pcap_audio_list, 'csv_list': csv_list,
         'xml_upload_form': xpc_upload_form,
         'upload_msg': uploadMsg if 'uploadMsg' in locals() else False,
         }

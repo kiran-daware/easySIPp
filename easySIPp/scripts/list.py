@@ -25,18 +25,31 @@ def list_xml_files(directory):
 def list_pcap_files(directory):
     try:
         pcap_files = []
-        
-        files = [file for file in os.listdir(directory)]
-        
+        files = [file for file in os.listdir(directory)]  
         for file in files:
             if file.endswith('.pcap'):
-                pcap_files.append(file)
-        
+                pcap_files.append(file)     
         # Sort the list of pcap files
         pcap_files.sort()
         print("Listing PCAP files:")
         print(pcap_files)
         
         return pcap_files
+    except FileNotFoundError:
+        return "Directory not found."
+    
+def list_csv_files(directory):
+    try:
+        csv_files = []      
+        files = [file for file in os.listdir(directory)]
+        for file in files:
+            if file.endswith('.csv'):
+                csv_files.append(file)
+        # Sort the list of csv files
+        csv_files.sort()
+        print("Listing CSV files:")
+        print(csv_files)
+        
+        return csv_files
     except FileNotFoundError:
         return "Directory not found."
