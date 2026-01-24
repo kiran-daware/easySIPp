@@ -20,7 +20,7 @@ function createPcapCsvListItem(fileName){
 
     // Delete button 
     const deletePcap = document.createElement('a');
-    deletePcap.href = `/xml-management/?delete-pcap=${fileName}`;
+    deletePcap.href = `/xml-management/?delete=${fileName}`;
     deletePcap.className = 'xml-li-button';
     deletePcap.title = 'Delete';
     deletePcap.onclick = function() {
@@ -76,7 +76,7 @@ function createXmlListItem(xmlName){
 
     // Delete button 
     const deleteXml = document.createElement('a');
-    deleteXml.href = `/xml-management/?delete-xml=${xmlName}`;
+    deleteXml.href = `/xml-management/?delete=${xmlName}`;
     deleteXml.className = 'xml-li-button';
     deleteXml.title = 'Delete';
     deleteXml.onclick = function() {

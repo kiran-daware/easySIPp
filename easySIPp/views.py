@@ -311,17 +311,19 @@ def xml_mgmt_view(request):
 
 
     if request.method =='GET':
-        if 'delete-xml' in request.GET:
-            deleteXmlName=request.GET.get('delete-xml')
-            deleteXmlPath = xml_dir / deleteXmlName
-            if deleteXmlPath.exists():
-                deleteXmlPath.unlink()
-        
-        if 'delete-pcap' in request.GET:
-            deletePcapName=request.GET.get('delete-pcap')
-            deletePcapPath = pcap_dir / deletePcapName
-            if deletePcapPath.exists():
-                deletePcapPath.unlink()
+        if 'delete' in request.GET:
+            deleteName=request.GET.get('delete')
+            if deleteName.lower().endswith('.xml'):
+                deletePath = xml_dir / deleteName
+            elif deleteName.lower().endswith('.pcap'):
+                deletePath = pcap_dir / deleteName
+            elif deleteName.lower().endswith('.csv'):
+                deletePath = csv_dir / deleteName
+            else:
+                deletePath = None
+
+            if deletePath and deletePath.exists():
+                deletePath.unlink()
         
     uacList, uasList = list_xml_files(str(xml_dir))
     pcap_audio_list = list_pcap_files(str(pcap_dir))
