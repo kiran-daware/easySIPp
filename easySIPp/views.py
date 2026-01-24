@@ -6,7 +6,7 @@ from django.conf import settings
 from django.urls import reverse
 from django.contrib import messages
 from .forms import UACForm, UASForm
-from .forms import xmlUploadForm
+from .forms import xpcUploadForm
 from .models import UacAppConfig, UasAppConfig
 from .scripts.ksipp import get_sipp_processes, clean_filename, run_uac, run_uas, delete_old_screen_logs
 from .scripts.list import list_xml_files, list_pcap_files
@@ -164,6 +164,21 @@ def serve_xml_file(request, xmlname):
         xmlContent = file.read()
     return HttpResponse(xmlContent, content_type='text/plain')
 
+def serve_pcap_csv (request, filename):
+    file_path = Path(settings.BASE_DIR) / 'easySIPp' / 'xml'
+    if filename.lower().endswith('.pcap'):
+        file_path = file_path / 'pcap' / filename
+        content_type = 'application/vnd.tcpdump.pcap'
+    elif filename.lower().endswith('.csv'):
+        file_path = file_path / 'csv' / filename
+        content_type = 'text/csv'
+    else:
+        return HttpResponse('Invalid file type', status=400)
+
+    with open(file_path, 'rb') as file:
+        file_content = file.read()
+    return HttpResponse(file_content, content_type=content_type)
+
 
 def xml_editor(request):
     xml_path = Path(settings.BASE_DIR) / 'easySIPp' / 'xml'
@@ -250,33 +265,50 @@ def create_scenario_xml_view(request):
 def xml_mgmt_view(request):
     xml_dir = Path(settings.BASE_DIR) / 'easySIPp' / 'xml'
     pcap_dir = Path(settings.BASE_DIR) / 'easySIPp' / 'xml' / 'pcap'
-    xmlUploadF = xmlUploadForm()
+    csv_dir = Path(settings.BASE_DIR) / 'easySIPp' / 'xml' / 'csv'
+    xpc_upload_form = xpcUploadForm()
 
     if request.method == 'POST' and 'submitType' in request.POST:
         submitType = request.POST.get('submitType')
         if submitType == 'upload':
-            xmlUploadF = xmlUploadForm(request.POST, request.FILES)
-            if xmlUploadF.is_valid():
+            xpc_upload_form = xpcUploadForm(request.POST, request.FILES)
+            if xpc_upload_form.is_valid():
                 uploaded_file = request.FILES['file']
                 cleaned_filename = clean_filename(uploaded_file.name)
-                file_path = xml_dir / cleaned_filename
-                
-                # Validate the uploaded XML file
-                # if file name already exists, do not overwrite, show error
-                if file_path.exists():
-                    uploadMsg = f"File '{cleaned_filename}' already exists. Rename your file and try again."
-                 
+
+                if cleaned_filename.lower().endswith(('.xml')):
+                    file_path = xml_dir / cleaned_filename
+                    if file_path.exists():
+                        uploadMsg = f"File '{cleaned_filename}' already exists. Rename your file and try again."                    
+                    else:
+                        try:
+                            with open(file_path, 'wb+') as destination:
+                                for chunk in uploaded_file.chunks():
+                                    destination.write(chunk)
+                            tree = ET.parse(str(file_path))
+                            uploadMsg = f"File '{cleaned_filename}' uploaded successfully."
+                        
+                        except ET.ParseError as e:
+                            file_path.unlink(missing_ok=True)
+                            uploadMsg = f"Invalid XML file '{uploaded_file.name}': {e}"
+
+                elif cleaned_filename.lower().endswith(('.pcap', '.csv')):
+                    file_path = pcap_dir / cleaned_filename if cleaned_filename.lower().endswith('.pcap') else csv_dir / cleaned_filename
+                    if file_path.exists():
+                        uploadMsg = f"File '{cleaned_filename}' already exists. Rename your file and try again."
+                    else:
+                        try:
+                            with open(file_path, 'wb+') as destination:
+                                for chunk in uploaded_file.chunks():
+                                    destination.write(chunk)
+                            uploadMsg = f"File '{cleaned_filename}' uploaded successfully."
+                        except Exception as e:
+                            file_path.unlink(missing_ok=True)
+                            uploadMsg = f"Error uploading file '{cleaned_filename}': {e}"
+
                 else:
-                    try:
-                        with open(file_path, 'wb+') as destination:
-                            for chunk in uploaded_file.chunks():
-                                destination.write(chunk)
-                        tree = ET.parse(str(file_path))
-                        uploadMsg = f"File '{cleaned_filename}' uploaded successfully."
-                    
-                    except ET.ParseError as e:
-                        file_path.unlink(missing_ok=True)
-                        uploadMsg = f"Invalid XML file '{uploaded_file.name}': {e}"
+                    uploadMsg = "Only .xml, .pcap, .csv files are allowed. XML file name should start with 'uac' or 'uas'."
+
 
     if request.method =='GET':
         if 'delete-xml' in request.GET:
@@ -295,7 +327,7 @@ def xml_mgmt_view(request):
     pcap_audio_list = list_pcap_files(str(pcap_dir))
     context = {
         'uac_list':uacList, 'uas_list':uasList, 'pcap_audio_list': pcap_audio_list,
-        'xml_upload_form': xmlUploadF,
+        'xml_upload_form': xpc_upload_form,
         'upload_msg': uploadMsg if 'uploadMsg' in locals() else False,
         }
     

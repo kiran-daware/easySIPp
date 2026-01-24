@@ -150,14 +150,18 @@ class UASForm(forms.ModelForm):
             return []
 
 
-class xmlUploadForm(forms.Form):
-    file = forms.FileField(label='Select an XML file', help_text='File name should start with "uac" or "uas".',
-                           widget=forms.ClearableFileInput(attrs={'accept': '.xml', 'max_upload_size': 102400}))
+class xpcUploadForm(forms.Form):
+    file = forms.FileField(label='Select an XML or PCAP or CSV file', help_text='XML file name should start with "uac" or "uas".',
+                           widget=forms.ClearableFileInput(attrs={'accept': '.xml, .pcap, .csv', 'max_upload_size': 102400}))
 
     def clean_file(self):
         uploaded_file = self.cleaned_data.get('file')
-        if not uploaded_file.name.lower().startswith(('uac', 'uas')) or not uploaded_file.name.lower().endswith('.xml'):
+        if not uploaded_file.name.lower().endswith('.pcap') and not uploaded_file.name.lower().endswith('.xml') and not uploaded_file.name.lower().endswith('.csv'):
+            raise ValidationError('Only .xml, .pcap, .csv files are allowed.')
+
+        if uploaded_file.name.lower().endswith('.xml') and not uploaded_file.name.lower().startswith(('uac', 'uas')):
             raise ValidationError('File name should start with "uac" or "uas" and have .xml extension.')
+        
         max_upload_size = 102400  # 100 KB in bytes
         if uploaded_file.size > max_upload_size:
             raise ValidationError('File size exceeds the maximum allowed limit (250 KB).')

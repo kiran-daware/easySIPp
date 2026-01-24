@@ -11,7 +11,7 @@ function createPcapListItem(pcapName){
 
     // Download link
     const downloadLink = document.createElement('a');
-    downloadLink.href = `/xml/pcap/${pcapName}`;
+    downloadLink.href = `/download/${pcapName}`;
     downloadLink.download = pcapName; 
     downloadLink.className = 'xml-li-button';
     downloadLink.title = 'Download';
