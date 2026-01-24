@@ -24,7 +24,7 @@
             <span class="close">&times;</span>
             <div id="upload-div">
                 <h3>Upload new xml</h3>
-                <form method="post" enctype="multipart/form-data">
+                <form method="post" enctype="multipart/form-data" id="upload-form">
                     {% csrf_token %}
                     <p class="errorlist">{% if upload_msg %}{{ upload_msg }}{% endif %}</p>
                     {% if xml_upload_form.file.errors %}
@@ -35,6 +35,7 @@
                     </ul>
                     {% endif %}
                     {{ xml_upload_form.file }}
+                    <p id="file-size-debug" style="font-size: 0.9em; color: #666;"></p>
                     <button type="submit" name="submitType" value="upload">Upload</button>
                     (Hint: File name should start with "uac" or "uas".)
                 </form>          
@@ -115,6 +116,7 @@
             });
         </script>
         {% endif %}
-    
+
+{% include "footer.html" %}
 </body>
 </html>
