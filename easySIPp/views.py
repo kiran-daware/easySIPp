@@ -77,7 +77,7 @@ def index(request):
                     else:
                         logger.warning(uac_form.errors)
                         fields_to_check = ['called_party_number', 'calling_party_number', 'stun_server',
-                                           'total_no_of_calls', 'cps']
+                                           'total_no_of_calls', 'cps', 'csv_inf']
                         showMoreOptionsForm = any(field in uac_form.errors for field in fields_to_check)
 
 

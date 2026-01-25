@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.http import HttpResponse
 import os, shlex, socket, time, datetime
+from pathlib import Path
 import subprocess
 from .kstun import get_ip_info
 from .modify import tmp_xml_behind_nat, modify_number_xml_path
@@ -54,18 +55,27 @@ def run_uac(uac_config):
     uacXmlPath = str(settings.BASE_DIR / 'easySIPp' / 'xml' / uacXml)
     uac_remote = f"{uac_config.uac_remote}:{uac_config.uac_remote_port}"
     uacSrc = f"-i {uac_config.uac_local_addr} -p {uacSrcPort}"
+    csv_file = uac_config.csv_inf
 
     try:
         if any(stun_server):
             stunnedPath = stun4nat(uacXml, uacSrcPort, stun_server)
             if stunnedPath is not None:
                 uacXmlPath = stunnedPath
-            else: return HttpResponse(f'Stun server at {stun_server} is not responding!')
+            else:
+                sipp_error = f'Stun server at {stun_server} is not responding! Unconfigure in "More Options" if not needed.' 
+                logger.error(sipp_error)
+                return sipp_error
 
         if dialed_number or calling_number:
             uacXmlPath = modify_number_xml_path(uacXmlPath, calling_number, dialed_number)
+        
+        if csv_file:
+            csv_path = Path(settings.BASE_DIR) / 'easySIPp' / 'xml' / 'csv' / csv_file
+            uacCommand =f"{sipp} -sf {uacXmlPath} {uac_remote} {uacSrc} -m {noOfCalls} -r {cps} -t {protocol_uac} -inf {csv_path}"
+        else:
+            uacCommand = f"{sipp} -sf {uacXmlPath} {uac_remote} {uacSrc} -m {noOfCalls} -r {cps} -t {protocol_uac}"
 
-        uacCommand = f"{sipp} -sf {uacXmlPath} {uac_remote} {uacSrc} -m {noOfCalls} -r {cps} -t {protocol_uac}"
         outputFile = f'{uacXml}.log'
         uacProc = run_sipp_in_background(uacCommand, outputFile)
         time.sleep(0.4)

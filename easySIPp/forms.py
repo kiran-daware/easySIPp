@@ -2,6 +2,7 @@ from django import forms
 from django.conf import settings
 import xml.etree.ElementTree as ET
 import os
+from pathlib import Path
 from django.core.validators import RegexValidator
 from django.core.exceptions import ValidationError
 from .models import UacAppConfig, UasAppConfig
@@ -57,6 +58,12 @@ class UACForm(forms.ModelForm):
         required=True,
         initial=1
     )
+    csv_inf = forms.ChoiceField(
+        label='CSV Input File',
+        choices=[],  #set in __init__
+        required=False 
+    )
+
     stun_server = forms.GenericIPAddressField(
         label='STUN Server',
         protocol='IPv4',
@@ -73,10 +80,8 @@ class UACForm(forms.ModelForm):
             'uac_local_addr', 'src_port_uac', 'protocol_uac',
             'select_uac',
             'called_party_number', 'calling_party_number',
-            'total_no_of_calls', 'cps', 'stun_server',
+            'total_no_of_calls', 'cps', 'csv_inf', 'stun_server',
         ]
-
-    xmlPath = str(settings.BASE_DIR / 'easySIPp' / 'xml')
 
     def __init__(self, *args, uac_choices=None, **kwargs):
         super().__init__(*args, **kwargs)
@@ -85,16 +90,32 @@ class UACForm(forms.ModelForm):
             self.fields['uac_key'].choices = uac_choices
             self.fields['uac_key'].initial = self.instance.uac_key
 
+        self.fields['csv_inf'].choices = self._get_csv_file_choices()
+        self.fields['csv_inf'].initial = self.instance.uac_key if self.instance.csv_inf else ''
+
 
     def _get_xml_file_choices(self, prefix):
+        xml_dir = Path(settings.BASE_DIR) / 'easySIPp' / 'xml'
         try:
             return sorted([
-                (f, f) for f in os.listdir(self.xmlPath)
+                (f, f) for f in os.listdir(xml_dir)
                 if f.endswith('.xml') and f.startswith(prefix)
             ])
         except FileNotFoundError:
             return []
-
+        
+    def _get_csv_file_choices(self):
+        csv_dir = str(settings.BASE_DIR / 'easySIPp' / 'xml' / 'csv')
+        try:
+            csv_files = sorted([
+                (f, f) for f in os.listdir(csv_dir)
+                if f.endswith('.csv')
+            ])
+            if not csv_files:
+                return [('', 'No CSV File Found')]
+            return [('', 'No CSV Selected')] + csv_files
+        except FileNotFoundError:
+            return [('', 'No CSV File Found')]
 
 
 
@@ -165,4 +186,9 @@ class xpcUploadForm(forms.Form):
         max_upload_size = 102400  # 100 KB in bytes
         if uploaded_file.size > max_upload_size:
             raise ValidationError('File size exceeds the maximum allowed limit (250 KB).')
+        
+        filename = uploaded_file.name.lower()
+        if len(filename) > 80:
+            raise ValidationError('File name is too long. Maximum 80 characters allowed. Rename the file and try again.')
+
         return uploaded_file
