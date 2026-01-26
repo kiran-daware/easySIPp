@@ -73,7 +73,7 @@ docker stop easysipp
 
 ### Update to Latest Version
 > [!WARNING]
-> Running `docker rm easysipp` will permanently delete all existing data including modified or uploaded XML files. Consider backing up important files first.
+> Running `docker rm easysipp` will permanently delete existing data from the easysipp container including modified or uploaded XML files. Consider backing up important files first.
 
 ```bash
 docker stop easysipp
