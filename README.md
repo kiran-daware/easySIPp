@@ -46,16 +46,48 @@
 
 ---
 
-## 🐳 How to Use (with Docker)
 
-Get up and running in seconds using Docker:
+## 🐳 How to Use (with Docker - Recommended)
 
 [![](https://img.shields.io/docker/pulls/krndwr/easysipp)](https://hub.docker.com/r/krndwr/easysipp)
 
+### Quick Start
 ```bash
+# Pull and run (first time)
+
+docker pull krndwr/easysipp:latest
+
 docker run -dt --network host --name easysipp krndwr/easysipp
 ```
-Once your container is up and running, open your browser and go to http://localhost:8080/ (or <your_linux/docker_IP>:8080)
+
+**Access at:** `http://localhost:8080` (or `http://<your-server-ip>:8080`)
+
+### Daily Usage
+```bash
+# Start container (after stopping or reboot)
+docker start easysipp
+
+# Stop container
+docker stop easysipp
+```
+
+### Update to Latest Version
+> [!WARNING]
+> Running `docker rm easysipp` will permanently delete all existing data including modified or uploaded XML files. Consider backing up important files first.
+
+```bash
+docker stop easysipp
+docker rm easysipp     # All existing data (like your modified or uploaded xml files) will be lost
+docker pull krndwr/easysipp:latest
+docker run -dt --network host --name easysipp krndwr/easysipp
+```
+
+### Complete Removal
+```bash
+docker stop easysipp
+docker rm easysipp     # All existing data (like your modified or uploaded xml files) will be lost
+docker rmi krndwr/easysipp
+```
 
 ---
 
