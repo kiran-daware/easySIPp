@@ -10,23 +10,23 @@
 </head>
 <body>
     {% include "header.html" %}
-    <div id="options-container">
-        <div id="buttons">
-            <button id="upload-xml-b">Upload new XML</button>
-            <button disabled>PCAP media</button>
-            <button disabled>Download all XML files</button>
-            <button disabled>Restore preloaded XMLs</button>
-        </div>
+
+    <div class="submenu-buttons">
+        <button class="kbutton" id="upload-xml-b">Upload new</button>
+        <button class="kbutton" id="pcap-media-b">PCAP audio files</button>
+        <button class="kbutton" id="csv-list-b">CSV injection files</button>
+        <button class="kbutton" style="display:none;" disabled>Download all XML files</button>
+        <button class="kbutton" style="display:none;" disabled>Restore preloaded XMLs</button>
     </div>
 
     <div id="upload-modal" class="modal">
         <div class="modal-content">
             <span class="close">&times;</span>
             <div id="upload-div">
-                <h3>Upload new xml</h3>
-                <form method="post" enctype="multipart/form-data">
+                <h3>Upload new XML / CSV / PCAP(audio)</h3>
+                <form method="post" enctype="multipart/form-data" id="upload-form">
                     {% csrf_token %}
-                    <p>{% if upload_msg %}{{ upload_msg }}{% endif %}</p>
+                    <p class="errorlist">{% if upload_msg %}{{ upload_msg }}{% endif %}</p>
                     {% if xml_upload_form.file.errors %}
                     <ul class="errorlist">
                         {% for error in xml_upload_form.file.errors %}
@@ -36,13 +36,22 @@
                     {% endif %}
                     {{ xml_upload_form.file }}
                     <button type="submit" name="submitType" value="upload">Upload</button>
-                    (Hint: File name should start with "uac" or "uas".)
+                    (Hint: .xml file name should start with "uac" or "uas".)
                 </form>          
             </div>
         </div>
     </div>
 
-    <div id="xml-lists">
+    <div id="xml-mgmt-dropdown-list">
+        <div id="pcap_audio_list" class="xml-pcap-lists submenu-dropdown">
+            <!-- The list of PCAP audio files will be dynamically inserted here -->
+        </div>
+        <div id="csv_list" class="xml-pcap-lists submenu-dropdown">
+            <!-- The list of CSV files will be dynamically inserted here -->
+        </div>
+    </div>
+
+    <div id="xml-lists" class="xml-pcap-lists">
         <ul id="uac-list">
             <!-- The list of UAC XML files will be dynamically inserted here -->
         </ul>
@@ -55,16 +64,21 @@
         </div> 
 
     </div>
-
+<!-- get uac_list and uas_list from views using django jason_script filter -->
     {{ uac_list|json_script:"uac-list-json" }}
     {{ uas_list|json_script:"uas-list-json" }}
+    {{ pcap_audio_list|json_script:"pcap-list-json" }}
+    {{ csv_list|json_script:"csv-list-json" }}
 
         <script>
             const uacListJson = document.getElementById('uac-list-json')
             const uacXmlFiles = JSON.parse(uacListJson.textContent);
             const uasListJson = document.getElementById('uas-list-json')
             const uasXmlFiles = JSON.parse(uasListJson.textContent);
-            console.log(uasXmlFiles)
+            const pcapListJson = document.getElementById('pcap-list-json')
+            const pcapAudioFiles = JSON.parse(pcapListJson.textContent);
+            const csvListJson = document.getElementById('csv-list-json')
+            const csvFiles = JSON.parse(csvListJson.textContent);
 
             // List of XML files
             /*const uacXmlFiles=[
@@ -93,7 +107,6 @@
     
             // used in sequence-diagram-kmod.js
             let kpacketId = 1;
-            console.log('kiran');
         </script>
         <script src="{% static 'sdjs/snap.svg-min.js' %}"></script>
         <script src="{% static 'sdjs/underscore-min.js' %}"></script>
@@ -107,6 +120,7 @@
             });
         </script>
         {% endif %}
-    
+
+{% include "footer.html" %}
 </body>
 </html>

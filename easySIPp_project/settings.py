@@ -56,6 +56,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'easySIPp.context_processors.version_context'
             ],
         },
     },
@@ -111,6 +112,11 @@ LOGGING = {
         'django.server': {
             'handlers': ['file'],
             'level': 'ERROR',
+            'propagate': False,
+        },
+        'django.db.backends': {
+            'handlers': ['file'],
+            'level': 'WARNING' if DEBUG else 'INFO',
             'propagate': False,
         },
     },

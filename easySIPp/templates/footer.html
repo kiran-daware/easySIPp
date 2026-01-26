@@ -1,0 +1,141 @@
+<style>
+footer {
+  position: fixed; bottom: 0; left: 0; right: 0; 
+  background: rgba(255,255,255,0.95); backdrop-filter: blur(10px);
+  padding: 10px 20px; border-top: 1px solid #ddd;
+  text-align: center; font-size: 13px; color: #666; z-index: 100;
+}
+
+footer a {
+    transition: color 0.2s;
+    text-decoration: none;
+    color: #49443d;
+}
+footer a:hover {
+  color: #ff943f;
+}
+
+#aboutModal {
+  display: none; position: fixed; z-index: 1000; 
+  left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5);
+}
+
+#aboutModal > div {
+  background: rgba(248,246,242,0.98); margin: 5% auto; padding: 28px; 
+  max-width: 650px; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+  max-height: 90vh; overflow-y: auto;
+}
+
+#aboutModal h2 {
+  margin-top: 0; color: #333; font-size: 24px;
+}
+
+#close-about-modal-b {
+  margin-top: 25px; padding: 12px 30px; background: #49443d; 
+  color: #fff; border: none; border-radius: 6px; cursor: pointer;
+  font-size: 14px; font-weight: 500;
+}
+#close-about-modal-b:hover {
+  background: #ff943f;
+}
+
+</style>
+<footer>
+    <span><strong>easySIPp</strong> - SIP Testing, Simplified</span>
+    <span style="margin: 0 10px;">•</span>
+    <span>Made with ❤️ by 
+        <a href="https://dkiran.net" target="_blank" 
+           style="font-weight: 600;">
+            Kiran Daware
+        </a>
+    </span>
+    <span style="margin: 0 10px;">•</span>
+    <a href="#" onclick="showAboutModal(); return false;" 
+       style="color: #999;">
+        About & Licenses
+    </a>
+</footer>
+
+<div id="aboutModal" onclick="closeAboutModal(event)">
+    <div onclick="event.stopPropagation()">
+        
+        <h2>About easySIPp</h2>
+        
+        <p style="color: #666; margin-bottom: 20px;"><strong>Version:</strong> {{ APP_VERSION }}<br />
+        Release Date: {{ APP_RELEASE_DATE }}</p>
+        
+        <p style="line-height: 1.7; color: #555; margin-bottom: 20px;">
+            <strong>easySIPp</strong> streamlines SIP/VoIP testing by providing a 
+            comprehensive web platform for SIPp. Designed for telecom professionals 
+            and QA teams, it enables you to visually create XML scenarios, preview 
+            call flows, execute tests with one click, and monitor running tests in 
+            real-time — eliminating command-line complexity while maintaining full 
+            SIPp capabilities.
+        </p>
+
+        <p style="margin-bottom: 20px;">
+            <strong>Created by:</strong> 
+            <a href="https://dkiran.net" target="_blank" 
+               style="color: #ff943f; text-decoration: none; font-weight: 600;">
+                Kiran Daware
+            </a>
+            <span style="margin: 0 10px;">•</span>
+            <a style="color:#666; text-decoration: none;" href="mailto:kirandaware@outlook.com?subject=easySIPp"> &#128231; email</a>
+        </p>
+        
+        <hr style="margin: 25px 0; border: none; border-top: 1px solid #ddd;">
+        
+        <h3 style="font-size: 18px; color: #333; margin-bottom: 15px;">Open Source Licenses</h3>
+        
+        <p style="margin-bottom: 12px;">
+            <strong>easySIPp:</strong> 
+            <a href="https://github.com/kiran-daware/easySIPp/blob/main/LICENSE" 
+               target="_blank" style="color: #ff943f; text-decoration: none;">
+                GPLv3
+            </a>
+        </p>
+        
+        <p style="margin-bottom: 20px;">
+            <strong>SIPp:</strong> This application bundles 
+            <a href="https://github.com/SIPp/sipp" target="_blank" 
+               style="color: #ff943f; text-decoration: none;">SIPp</a>, 
+            which is licensed under 
+            <a href="https://github.com/SIPp/sipp/blob/master/LICENSE.txt" target="_blank"
+               style="color: #ff943f; text-decoration: none;">
+                GPLv3
+            </a>
+        </p>
+        
+        <p style="font-size: 12px; color: #999; margin-top: 20px;">
+            Source code available on 
+            <a href="https://github.com/kiran-daware/easySIPp" target="_blank"
+               style="color: #ff943f; text-decoration: none;">GitHub</a>
+        </p>
+        
+        <button id="close-about-modal-b" onclick="closeAboutModal()">
+            Close
+        </button>
+    </div>
+</div>
+
+<script>
+function showAboutModal() {
+    document.getElementById('aboutModal').style.display = 'block';
+    document.body.style.overflow = 'hidden'; // Prevent background scrolling
+}
+
+function closeAboutModal(event) {
+    // Close if clicking outside the modal content or on close button
+    if (!event || event.target.id === 'aboutModal') {
+        document.getElementById('aboutModal').style.display = 'none';
+        document.body.style.overflow = 'auto'; // Re-enable scrolling
+    }
+}
+
+// Close modal with Escape key
+document.addEventListener('keydown', function(event) {
+    if (event.key === 'Escape') {
+        closeAboutModal();
+    }
+});
+</script>

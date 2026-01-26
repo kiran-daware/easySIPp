@@ -1,49 +1,48 @@
 # easySIPp - SIP Testing, Simplified.
 
-> **🚨 Project Renamed:** This project was formerly known as `kSipP`. It is now called **easySIPp** to better reflect its mission of making SIP testing simpler and more accessible. All functionality remains the same. Please update your bookmarks or references to the new name:  
-> **New URL:** https://github.com/kiran-daware/easySIPp  
-> *(Old links will still redirect properly.)*
+**easySIPp** streamlines SIP/VoIP testing by providing a comprehensive web platform for SIPp. Designed for telecom professionals and QA teams, it enables you to visually create XML scenarios, preview call flows, execute tests with one click, and monitor running tests in real-time — eliminating command-line complexity while maintaining full SIPp capabilities.
+
+[![Docker Pulls](https://img.shields.io/docker/pulls/krndwr/easysipp)](https://hub.docker.com/r/krndwr/easysipp)
+[![License](https://img.shields.io/badge/license-GPLv3-blue.svg)](https://github.com/kiran-daware/easySIPp/blob/main/LICENSE)
+[![GitHub Stars](https://img.shields.io/github/stars/kiran-daware/easySIPp)](https://github.com/kiran-daware/easySIPp/stargazers)
+
+> **🚨 Project Renamed:** This project was formerly known as `kSipP`. It is now called **easySIPp** to better reflect its mission. All functionality remains the same.
 
 ---
 
 ## 🚀 What is easySIPp?
 
-[SIPp](https://github.com/SIPp/sipp) is a powerful CLI-based tool used in the telecom world for **VoIP SIP testing**, but it requires command-line expertise. That steep learning curve can be a barrier for many.
+[SIPp](https://github.com/SIPp/sipp) is a powerful CLI-based tool for VoIP/SIP testing, widely used in the telecom industry. However, its command-line interface can be challenging for many users.
 
-**easySIPp** is a **web-based graphical user interface (GUI)** that runs on top of SIPp, enabling users to run, manage, and visualize SIP tests effortlessly — no command-line skills required.
+**easySIPp** provides a modern web platform for SIPp, making professional VoIP testing accessible to everyone — from beginners to experienced engineers. But easySIPp is not just a GUI for SIPp; it offers much more. Beyond the web interface, it includes powerful features like click-to-create SIPp XML scenarios, call flow visualization, real-time monitoring and control of running SIPp instances, and comprehensive configuration management for complete SIP/VoIP testing workflows.
 
 ---
 
 ## ✨ Features
 
-- **Effortless Scenario Creation**  
-  Build and edit complex **SIPp XML scenarios** directly in the browser — no need to write raw XML.  
+- **Effortless Scenario Creation** - Build and edit complex **SIPp XML scenarios** directly in the browser — no need to write raw XML, just a few clicks and your xml scenarion will be ready.  
   👉 Try the [Online SIPp XML Generator](https://kiran-daware.github.io/sipp-xml/)
 
-- **Intuitive Test Configuration**  
-  Configure call flows, caller/callee numbers, rates, number of calls, and more through a simple Web GUI.
+- **Call Flow Visualization** - Preview and understand SIP call flows before execution with interactive diagrams.
 
-- **One-Click Execution**  
-  Run SIPp scenarios instantly — no scripts or terminal needed.
+- **Configuration Management** - Save and switch between multiple UAC (User Agent Client) and UAS (User Agent Server) configurations.
 
-- **Live Output Streaming**  
-  Watch SIPp results and logs in real time, just like you would in the terminal.
+- **Intuitive Test Configuration** - Configure call flows, caller/callee numbers, rates, number of calls, and more through a simple Web GUI.
 
-- **Seamless SIPp Integration**  
-  Under the hood, it’s still the real SIPp — just with a modern frontend.
+- **One-Click Execution** - Run SIPp scenarios instantly — no scripts or terminal needed.
+
+- **Live Output Streaming** - Watch SIPp results and logs in real time, just like you would in the terminal.
+
+- **Seamless SIPp Integration** - Under the hood, it’s still the real SIPp — just with a modern frontend.
 
 ---
 
-## 🤖 Who Should Use This?
+## 🎯 Who Should Use This?
 
-- **VoIP Testers & QA Engineers**  
-  Streamline your testing workflow with an intuitive UI.
-
-- **Telecom Devs & Network Engineers**  
-  Focus on your SIP logic, not scripting.
-
-- **Anyone wanting an easier SIPp experience**  
-  Whether you're new or experienced, easySIPp makes SIP testing easier for everyone.
+✅ **VoIP Testers & QA Engineers** - Streamline testing workflows with an intuitive UI  
+✅ **Telecom Engineers** - Focus on test scenarios, not command-line syntax  
+✅ **Network Operators** - Quickly validate SIP infrastructure and call flows  
+✅ **Anyone New to SIPp** - Learn SIP testing without the steep learning curve  
 
 ---
 
@@ -60,25 +59,64 @@ Once your container is up and running, open your browser and go to http://localh
 
 ---
 
-## ❓ Frequently Asked Questions
+## ❓ FAQ
 
-### 🔹 What is easySIPp?
-A web-based frontend for [SIPp](https://github.com/SIPp/sipp), making SIP call testing accessible via a modern interface.
+<details>
+<summary><strong>What is easySIPp?</strong></summary>
+A comprehensive web platform for SIPp that enables visual scenario creation, call flow preview, one-click execution, and real-time monitoring — eliminating command-line complexity.
+</details>
 
-### 🔹 Does it replace SIPp?
-No — it enhances it. It still runs the original SIPp engine under the hood.
+<details>
+<summary><strong>Does it replace SIPp?</strong></summary>
+No, it enhances SIPp. easySIPp runs the original SIPp engine under the hood, providing a modern web interface on top.
+</details>
 
-### 🔹 Is it open source?
-Yes! Contributions are welcome. Fork the repo, create issues, or open pull requests.
+<details>
+<summary><strong>Is it open source?</strong></summary>
+Yes! easySIPp is open source under GPLv3. Contributions are welcome.
+</details>
 
-### 🔹 Can I still use the old repo (`kSipP`)?
-Old links will redirect, but please use the new name (`easySIPp`) moving forward for clarity and consistency.
+<details>
+<summary><strong>Can I use this in production?</strong></summary>
+easySIPp is actively developed and used for VoIP testing. However, as with any testing tool, validate it in your environment first.
+</details>
+
+---
+
+## 🛠️ Technology Stack
+
+- **Backend**: Django (Python)
+- **Frontend**: HTML, CSS, JavaScript
+- **Server**: Nginx + Uvicorn (ASGI)
+- **Containerization**: Docker
+- **Core Engine**: SIPp
+
+---
+
+## 📝 License
+
+This project is licensed under the **GNU General Public License v3.0** (GPLv3).
+
+**Note**: easySIPp bundles the [SIPp](https://github.com/SIPp/sipp) binary, which is also licensed under GPLv3. By using this software, you agree to comply with the terms of the GPLv3 license.
 
 ---
 
 ## ⚠️ Disclaimer
 
-This project is a work in progress and is provided **"as is"** without any warranty. It bundles the [SIPp](https://github.com/SIPp/sipp) binary, which is licensed under the **GNU General Public License (GPL)**. You're responsible for complying with the license terms.
+This project is provided **"as is"** without warranty of any kind. Use at your own risk.
+
+
+---
+
+<div align="center">
+
+**Made with ❤️ by [Kiran Daware](https://dkiran.net)**
+
+⭐ Star this repo if you find it useful!
+
+</div>
+
+---
 
 ## 📸 Screenshots
 

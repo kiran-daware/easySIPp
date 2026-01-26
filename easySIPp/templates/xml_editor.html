@@ -18,12 +18,17 @@
 {% csrf_token %}
 <input type="hidden" name="xml_content" id="xmlContentInput" value="{{ xml_content }}">
 <input type="hidden" name="xml_name" value="{{ xml_name }}">
-<div id="xmlEditor" style="height: 88%; width: 100%;">{{ xml_content }}</div>
+<div id="xml-editor">{{ xml_content }}</div>
 
 <div class="savebuttons">
     <button type="button" onclick="validateAndSubmit('save')">Save in the same xml</button>  Or
     <button type="button" onclick="showFileNamePrompt()" id="save_as_button">Save as a new xml</button>
+
+    {%if error_msg %}
+    <div id="fileNamePrompt" style="display: inline;">
+    {% else %}
     <div id="fileNamePrompt" style="display: none;">
+    {% endif %}
         <b><span>{% if xml_name|slice:"0:3" == "uac" %}uac_{% elif xml_name|slice:"0:3" == "uas" %}uas_{% endif %}</span></b>
         <input type="text" name="new_xml_name" id="new_xml_name" maxlength="35" value="">
         <span>.xml</span>
@@ -35,12 +40,15 @@
     {% if save %}
     Successfully Saved to <b>{{ xml_name }}</b>
     {% endif %}
+    {% if error_msg %}
+    <span style="color: red;">{{ error_msg }}</span>
+    {% endif %}
 </div>
 </form>
 
 <!-- Initialize the editor -->
 <script>
-    var editor = ace.edit("xmlEditor");
+    var editor = ace.edit("xml-editor");
     editor.session.setMode("ace/mode/xml");
     editor.setTheme("ace/theme/chrome");
     editor.setFontSize('14px');
@@ -102,7 +110,7 @@
 
 </script>
 
-
+{% include "footer.html" %}
 </body>
 </html>
 

@@ -15,6 +15,7 @@ class UacAppConfig(models.Model):
     calling_party_number = models.CharField(max_length=30, blank=True)
     total_no_of_calls = models.PositiveIntegerField(default=1)
     cps = models.PositiveIntegerField(default=1, null=True)
+    csv_inf = models.CharField(max_length=100, blank=True, null=True)
     stun_server = models.GenericIPAddressField(null=True, blank=True)
 
     is_active_config = models.BooleanField(default=False)
