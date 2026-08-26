@@ -26,7 +26,7 @@
                 <h3>Upload new XML / CSV / PCAP(audio)</h3>
                 <form method="post" enctype="multipart/form-data" id="upload-form">
                     {% csrf_token %}
-                    <p class="errorlist">{% if upload_msg %}{{ upload_msg }}{% endif %}</p>
+                    <p class="success">{% if upload_msg %}{{ upload_msg }}{% endif %}</p>
                     {% if xml_upload_form.file.errors %}
                     <ul class="errorlist">
                         {% for error in xml_upload_form.file.errors %}
@@ -37,7 +37,7 @@
                     {{ xml_upload_form.file }}
                     <button type="submit" name="submitType" value="upload">Upload</button>
                     (Hint: .xml file name should start with "uac" or "uas".)
-                </form>          
+                </form>
             </div>
         </div>
     </div>
@@ -58,10 +58,10 @@
         <ul id="uas-list">
             <!-- The list of UAS XML files will be dynamically inserted here -->
         </ul>
-    
+
         <div id="xml-flow">
             <div id="flow-diagram"></div>
-        </div> 
+        </div>
 
     </div>
 <!-- get uac_list and uas_list from views using django jason_script filter -->
@@ -104,18 +104,18 @@
              'uas_reinvite_from_B.xml',
              'uas_send_recv_update.xml'
             ]*/
-    
+
             // used in sequence-diagram-kmod.js
             let kpacketId = 1;
         </script>
         <script src="{% static 'sdjs/snap.svg-min.js' %}"></script>
         <script src="{% static 'sdjs/underscore-min.js' %}"></script>
         <script src="{% static 'sdjs/sequence-diagram-kmod2.js' %}"></script>
-        <script src="{% static 'listXml.js' %}"></script>  
+        <script src="{% static 'listXml.js' %}"></script>
 
         {% if upload_msg or xml_upload_form.file.errors %}
         <script>
-            document.addEventListener('DOMContentLoaded', function() {     
+            document.addEventListener('DOMContentLoaded', function() {
                 document.getElementById('upload-modal').style.display = 'block';
             });
         </script>

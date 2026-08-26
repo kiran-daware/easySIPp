@@ -7,7 +7,7 @@
 *, *::before, *::after {
   box-sizing: border-box;
   font-family: inherit;
-  font-size: inherit; 
+  font-size: inherit;
   line-height: inherit;
 }
 
@@ -76,8 +76,8 @@ h1 a {
 
 
 .menubar {
-  display: flex; 
-  flex-grow: 1; 
+  display: flex;
+  flex-grow: 1;
   background-color: #ff943f;
 }
 
@@ -155,7 +155,7 @@ h1 a {
 /* Modal Content */
 .modal-content {
   background-color: beige;
-  margin: 50px auto; 
+  margin: 50px auto;
   padding: 20px;
   border: 1px solid #888;
   max-width: 80%;
@@ -168,10 +168,10 @@ h1 a {
 
 /* Style for flow diagrams */
 #flow-diagram1, #flow-diagram2 {
-  flex: 1; 
+  flex: 1;
   min-width: 200px;
   height: auto;
-  border: 1px solid #ddd; 
+  border: 1px solid #ddd;
   padding: 10px;
 }
 
@@ -198,6 +198,10 @@ h1 a {
   color: red;
 }
 
+.success {
+  color: green;
+}
+
 
 ul {
   list-style-type: none;
@@ -215,7 +219,7 @@ ul {
 .xml-pcap-lists li:nth-child(even) {
   background-color: #eaeaea;
 }
-.xml-pcap-lists li:hover{background-color: #ffffff; transform: scale(1.04);} 
+.xml-pcap-lists li:hover{background-color: #ffffff; transform: scale(1.04);}
 
 .selected{background-color: #71695e !important; color: #f1f1f1 !important;}
 .selected a {color: #f1f1f1;}
@@ -280,4 +284,3 @@ ul {
 #logContainer {
   font-family: monospace
 }
-
