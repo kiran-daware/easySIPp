@@ -36,13 +36,13 @@ class UACForm(forms.ModelForm):
         label='Dialed Number',
         max_length=18,
         required=False,
-        validators=[RegexValidator(r'^[a-zA-Z0-9]+$', 'Only alphanumeric characters are allowed.')]
+        validators=[RegexValidator(r'^\+?[a-zA-Z0-9]+$', 'Only alphanumeric characters are allowed.')]
     )
     calling_party_number = forms.CharField(
         label='Calling Party Number',
         max_length=18,
         required=False,
-        validators=[RegexValidator(r'^[a-zA-Z0-9]+$', 'Only alphanumeric characters are allowed.')]
+        validators=[RegexValidator(r'^\+?[a-zA-Z0-9]+$', 'Only alphanumeric characters are allowed.')]
     )
     total_no_of_calls = forms.IntegerField(
         label='No. of calls to send',
@@ -61,7 +61,7 @@ class UACForm(forms.ModelForm):
     csv_inf = forms.ChoiceField(
         label='CSV Input File',
         choices=[],  #set in __init__
-        required=False 
+        required=False
     )
 
     stun_server = forms.GenericIPAddressField(
@@ -103,7 +103,7 @@ class UACForm(forms.ModelForm):
             ])
         except FileNotFoundError:
             return []
-        
+
     def _get_csv_file_choices(self):
         csv_dir = str(settings.BASE_DIR / 'easySIPp' / 'xml' / 'csv')
         try:
@@ -182,11 +182,11 @@ class xpcUploadForm(forms.Form):
 
         if uploaded_file.name.lower().endswith('.xml') and not uploaded_file.name.lower().startswith(('uac', 'uas')):
             raise ValidationError('File name should start with "uac" or "uas" and have .xml extension.')
-        
+
         max_upload_size = 102400  # 100 KB in bytes
         if uploaded_file.size > max_upload_size:
             raise ValidationError('File size exceeds the maximum allowed limit (250 KB).')
-        
+
         filename = uploaded_file.name.lower()
         if len(filename) > 80:
             raise ValidationError('File name is too long. Maximum 80 characters allowed. Rename the file and try again.')
