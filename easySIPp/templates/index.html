@@ -36,19 +36,18 @@
          {{ UACForm.uac_local_addr.errors }}</p>
       <p>Total Calls: {{UACForm.total_no_of_calls}}  ||  CPS : {{UACForm.cps}}</p>
 
-        <div id="MoreOptions" {% if not showMoreOptionsForm %}style="display: none;"{% endif %}>
+        <div id="MoreOptions" style="display: none;">
             <div style="clear: both;">
                 <p>Dialed Number: {{UACForm.called_party_number}}{{UACForm.called_party_number.errors}}</p>
                 <p>Calling Party Number: {{UACForm.calling_party_number}}{{UACForm.calling_party_number.errors}}</p>
                 <p>CSV Input File: {{UACForm.csv_inf}}{{UACForm.csv_inf.errors}}</p>
                 <p>Stun Server: {{UACForm.stun_server}}{{UACForm.stun_server.errors}}</p>
             </div>
-            <button type="submit" name="save_conf" value="save_uac">Hide More Options</button>            
         </div>
       <p>{{ print_uac_command }}</p>
       <!-- Start & Kill Buttons -->
       <div class="savebuttons">
-        <button class="kbutton" id="showMoreOptions" {% if showMoreOptionsForm %}style="display: none;"{% endif %}>More Options</button>
+        <button class="kbutton" id="toggleMoreOptions">More Options</button>
         <button class="kbutton" id="uac_config_btn" type="submit" name="save_conf" value="save_uac">Save Config</button>
         <button class="kbutton" type="submit" name="save_conf" value="save_run_uac">Run UAC</button>
       </div>
@@ -113,7 +112,7 @@
                             <input type="hidden" name="cport" value="{{ process.cport }}">
                             <input type="hidden" name="mcalls" value="{{ process.mcalls }}">
                             <input type="submit" name="send_signal" value="Kill">
-                            <input type ="submit" name="send_signal" value="CheckOutput" formtarget="_blank">
+                            <input type="submit" name="send_signal" value="CheckOutput" formtarget="_blank">
                         </form>
                     </li>
                 {% endfor %}
@@ -169,6 +168,16 @@ document.addEventListener('DOMContentLoaded', function () {
             console.warn(`Element with ID '${fieldId}' not found.`);
         }
     });
+
+    // manage the options panel visibility
+    const isMoreOptions = localStorage.getItem("moreOptions");
+    if(isMoreOptions === "false") {
+        toggleMoreButton.textContent = "More Options";
+        MoreOptions.style.display = "none";
+    } else {
+        toggleMoreButton.textContent = "Hide Options";
+        MoreOptions.style.display = "block";
+    }
 });
 
 
@@ -205,26 +214,24 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
 //show-hide MoreOptions Form
-const showButton = document.getElementById("showMoreOptions");
-// const hideButton = document.getElementById("hideMoreOptions");
+const toggleMoreButton = document.getElementById("toggleMoreOptions");
 const MoreOptions = document.getElementById("MoreOptions");
 
-// Function to show the div
-function showDiv() {
+function toggleMoreDiv() {
     event.preventDefault();
-    MoreOptions.style.display = "block";
-}
-
-// Function to hide the div
-function hideButton() {
-    event.preventDefault();
-    showButton.style.display = "none";
+    if(MoreOptions.style.display == "block") {
+        toggleMoreButton.textContent = "More Options";
+        MoreOptions.style.display = "none";
+        localStorage.setItem("moreOptions", false);
+    } else {
+        toggleMoreButton.textContent = "Hide Options";
+        MoreOptions.style.display = "block";
+        localStorage.setItem("moreOptions", true);
+    }
 }
 
 // Add click event listeners to the buttons
-showButton.addEventListener("click", showDiv);
-showButton.addEventListener("click", hideButton);
-
+toggleMoreButton.addEventListener("click", toggleMoreDiv);
 
 let kpacketId = 1; // used in sequence-diagram-kmod2.js
 
