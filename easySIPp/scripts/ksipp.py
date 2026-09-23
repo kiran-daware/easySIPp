@@ -70,11 +70,13 @@ def run_uac(uac_config):
         if dialed_number or calling_number:
             uacXmlPath = modify_number_xml_path(uacXmlPath, calling_number, dialed_number)
         
+        csv=""
+        calls=""
         if csv_file:
-            csv_path = Path(settings.BASE_DIR) / 'easySIPp' / 'xml' / 'csv' / csv_file
-            uacCommand =f"{sipp} -sf {uacXmlPath} {uac_remote} {uacSrc} -m {noOfCalls} -r {cps} -t {protocol_uac} -inf {csv_path}"
-        else:
-            uacCommand = f"{sipp} -sf {uacXmlPath} {uac_remote} {uacSrc} -m {noOfCalls} -r {cps} -t {protocol_uac}"
+            csv = " -inf " + str(Path(settings.BASE_DIR)) + "/easySIPp/xml/csv/" + csv_file
+        if noOfCalls > 0:
+            calls = " -m " + str(noOfCalls)
+        uacCommand = f"{sipp} -sf {uacXmlPath} {uac_remote} {uacSrc} -r {cps}{calls} -t {protocol_uac}{csv}"
 
         outputFile = f'{uacXml}.log'
         uacProc = run_sipp_in_background(uacCommand, outputFile)

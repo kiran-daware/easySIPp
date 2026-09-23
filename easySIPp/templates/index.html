@@ -143,6 +143,11 @@
 {% endif %}
 
 <script>
+//show-hide MoreOptions Form
+const toggleMoreButton = document.getElementById("toggleMoreOptions");
+const MoreOptions = document.getElementById("MoreOptions");
+
+
 //Submit the xml name as soon as selected
 document.addEventListener('DOMContentLoaded', function () {
     // Map each element ID to its corresponding submit button ID
@@ -212,10 +217,6 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 
-
-//show-hide MoreOptions Form
-const toggleMoreButton = document.getElementById("toggleMoreOptions");
-const MoreOptions = document.getElementById("MoreOptions");
 
 function toggleMoreDiv() {
     event.preventDefault();
