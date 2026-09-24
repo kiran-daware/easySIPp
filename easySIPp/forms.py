@@ -46,7 +46,7 @@ class UACForm(forms.ModelForm):
     )
     total_no_of_calls = forms.IntegerField(
         label='No. of calls to send',
-        min_value=1,
+        min_value=0,
         max_value=28000,
         required=True,
         initial=1

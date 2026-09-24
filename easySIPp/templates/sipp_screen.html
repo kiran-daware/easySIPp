@@ -12,15 +12,15 @@
 
 <div>
     {% if not xml|slice:":3" == "uas" %}
-        {% if mcalls and mcalls|add:"0" > 10 %}
+        {% if mcalls|add:"0" > 10 or mcalls == "False" %}
             <button onclick="sendKey('p')">Pause/Start (p)</button>
             <button onclick="sendKey('*')">+10 cps (*)</button>
         {% endif %}
-        {% if mcalls and mcalls|add:"0" > 2 %}
+        {% if mcalls and mcalls|add:"0" > 2 or mcalls == "False" %}
             <button onclick="sendKey('+')">+1 cps (+)</button>
             <button onclick="sendKey('-')">-1 cps (-)</button>
         {% endif %}
-        {% if mcalls and mcalls|add:"0" > 10 %}
+        {% if mcalls and mcalls|add:"0" > 10 or mcalls == "False" %}
             <button onclick="sendKey('/')">-10 cps (/)</button>
         {% endif %}
 

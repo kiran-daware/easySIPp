@@ -21,7 +21,6 @@ logger = logging.getLogger(__name__)
 
 @never_cache
 def index(request):
-    showMoreOptionsForm = False
     uac_form = None
     uas_form = None
     uac_choices = list(UacAppConfig.objects.values_list('uac_key', 'uac_config_name'))
@@ -76,9 +75,6 @@ def index(request):
 
                     else:
                         logger.warning(uac_form.errors)
-                        fields_to_check = ['called_party_number', 'calling_party_number', 'stun_server',
-                                           'total_no_of_calls', 'cps', 'csv_inf']
-                        showMoreOptionsForm = any(field in uac_form.errors for field in fields_to_check)
 
 
             elif save_conf in ['save_uas', 'save_run_uas']:
@@ -149,7 +145,6 @@ def index(request):
         'UACForm': uac_form,
         'UASForm': uas_form,
         'sipp_processes': sipp_processes,
-        'showMoreOptionsForm': showMoreOptionsForm if 'showMoreOptionsForm' in locals() else False,
         'sipp_error': sipp_error if 'sipp_error' in locals() else False
         }
 
