@@ -36,7 +36,11 @@
          {{ UACForm.uac_local_addr.errors }}</p>
       <p>Total Calls: {{UACForm.total_no_of_calls}}  ||  CPS : {{UACForm.cps}}</p>
 
-        <div id="MoreOptions" style="display: none;">
+        {% if UACForm.called_party_number.errors or UACForm.calling_party_number.errors or UACForm.csv_inf.errors or UACForm.stun_server.errors %}
+        <div id="MoreOptions" data-has-errors="true" style="display: block;">
+        {% else %}
+        <div id="MoreOptions" data-has-errors="false" style="display: none;">
+        {% endif %}
             <div style="clear: both;">
                 <p>Dialed Number: {{UACForm.called_party_number}}{{UACForm.called_party_number.errors}}</p>
                 <p>Calling Party Number: {{UACForm.calling_party_number}}{{UACForm.calling_party_number.errors}}</p>
@@ -146,6 +150,7 @@
 //show-hide MoreOptions Form
 const toggleMoreButton = document.getElementById("toggleMoreOptions");
 const MoreOptions = document.getElementById("MoreOptions");
+const hasMoreOptionsErrors = MoreOptions.dataset.hasErrors === "true";
 
 
 //Submit the xml name as soon as selected
@@ -176,7 +181,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // manage the options panel visibility
     const isMoreOptions = localStorage.getItem("moreOptions");
-    if(isMoreOptions === "false") {
+    if (hasMoreOptionsErrors) {
+        toggleMoreButton.textContent = "Hide Options";
+        MoreOptions.style.display = "block";
+    } else if (isMoreOptions === "false") {
         toggleMoreButton.textContent = "More Options";
         MoreOptions.style.display = "none";
     } else {
@@ -218,9 +226,9 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 
-function toggleMoreDiv() {
+function toggleMoreDiv(event) {
     event.preventDefault();
-    if(MoreOptions.style.display == "block") {
+    if (MoreOptions.style.display === "block") {
         toggleMoreButton.textContent = "More Options";
         MoreOptions.style.display = "none";
         localStorage.setItem("moreOptions", false);
