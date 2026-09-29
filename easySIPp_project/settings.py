@@ -1,13 +1,18 @@
 from pathlib import Path
+import os
 
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+# Fetches the environment variable, defaulting to 'production' if not found
+DJANGO_ENV = os.environ.get("DJANGO_ENV", "production").lower()
+# Sets DEBUG to True only if the environment is strictly 'development'
+DEBUG = DJANGO_ENV == "development"
 
 # SECURITY WARNING: keep the secret key used in production!
 SECRET_KEY = 'django-insecure-#fs5^#gsc+tuvh+pty=$p^0wq+*ip3*o0ojno&$a&l^pbfoeh%'
 
-DEBUG = False
-
 # Allow any IP for development and image distribution — fine for local use
+# For production, you should specify the allowed hosts explicitly i.e. the hostname or IP address of your server where easySIPp is deployed.
 ALLOWED_HOSTS = ['*']
 
 # CSRF settings — safe default for local-only access
