@@ -6,3 +6,4 @@ collectstatic/
 *.sqlite3
 
 easySIPp/sipp
+logs

@@ -1,12 +1,10 @@
 # easySIPp - SIP Testing, Simplified.
 
-**easySIPp** streamlines SIP/VoIP testing by providing a comprehensive web platform for SIPp. Designed for telecom professionals and QA teams, it enables you to visually create XML scenarios, preview call flows, execute tests with one click, and monitor running tests in real-time — eliminating command-line complexity while maintaining full SIPp capabilities.
+**easySIPp** streamlines SIP/VoIP testing by providing a comprehensive web platform for SIPp. Designed for telecom professionals and QA teams, it enables you to visually create XML scenarios, preview call flows, execute tests with one click, and monitor running tests in real time — eliminating command-line complexity while maintaining full SIPp capabilities.
 
 [![Docker Pulls](https://img.shields.io/docker/pulls/krndwr/easysipp)](https://hub.docker.com/r/krndwr/easysipp)
 [![License](https://img.shields.io/badge/license-GPLv3-blue.svg)](https://github.com/kiran-daware/easySIPp/blob/main/LICENSE)
 [![GitHub Stars](https://img.shields.io/github/stars/kiran-daware/easySIPp)](https://github.com/kiran-daware/easySIPp/stargazers)
-
-> **🚨 Project Renamed:** This project was formerly known as `kSipP`. It is now called **easySIPp** to better reflect its mission. All functionality remains the same.
 
 ---
 
@@ -14,26 +12,26 @@
 
 [SIPp](https://github.com/SIPp/sipp) is a powerful CLI-based tool for VoIP/SIP testing, widely used in the telecom industry. However, its command-line interface can be challenging for many users.
 
-**easySIPp** provides a modern web platform for SIPp, making professional VoIP testing accessible to everyone — from beginners to experienced engineers. But easySIPp is not just a GUI for SIPp; it offers much more. Beyond the web interface, it includes powerful features like click-to-create SIPp XML scenarios, call flow visualization, real-time monitoring and control of running SIPp instances, and comprehensive configuration management for complete SIP/VoIP testing workflows.
+**easySIPp** provides a modern web platform for SIPp, making professional VoIP testing accessible to everyone — from beginners to experienced engineers. But it is more than a GUI: it lets you create SIPp XML scenarios with a few clicks, visualize call flows, monitor and control running SIPp instances in real time, and manage your UAC/UAS configurations in one place.
 
 ---
 
 ## ✨ Features
 
-- **Effortless Scenario Creation** - Build and edit complex **SIPp XML scenarios** directly in the browser — no need to write raw XML, just a few clicks and your xml scenarion will be ready.  
+- **Effortless Scenario Creation** - Build and edit complex **SIPp XML scenarios** directly in the browser. No need to write raw XML — a few clicks and your scenario is ready.  
   👉 Try the [Online SIPp XML Generator](https://kiran-daware.github.io/sipp-xml/)
 
 - **Call Flow Visualization** - Preview and understand SIP call flows before execution with interactive diagrams.
 
 - **Configuration Management** - Save and switch between multiple UAC (User Agent Client) and UAS (User Agent Server) configurations.
 
-- **Intuitive Test Configuration** - Configure call flows, caller/callee numbers, rates, number of calls, and more through a simple Web GUI.
+- **Intuitive Test Configuration** - Configure call flows, caller/callee numbers, call rate, number of calls, and more through a simple web GUI.
 
 - **One-Click Execution** - Run SIPp scenarios instantly — no scripts or terminal needed.
 
 - **Live Output Streaming** - Watch SIPp results and logs in real time, just like you would in the terminal.
 
-- **Seamless SIPp Integration** - Under the hood, it’s still the real SIPp — just with a modern frontend.
+- **Seamless SIPp Integration** - Under the hood, it's still the real SIPp — just with a modern frontend.
 
 ---
 
@@ -46,23 +44,22 @@
 
 ---
 
+## 1. 🐳 How to Use (with Docker - Recommended)
 
-## 🐳 How to Use (with Docker - Recommended)
-
-[![](https://img.shields.io/docker/pulls/krndwr/easysipp)](https://hub.docker.com/r/krndwr/easysipp)
+**Prerequisite:** [Docker](https://docs.docker.com/get-docker/) installed on your machine or server. The container uses host networking (`--network host`), which works best on Linux.
 
 ### Quick Start
+
 ```bash
 # Pull and run (first time)
-
 docker pull krndwr/easysipp:latest
-
 docker run -dt --network host --name easysipp krndwr/easysipp
 ```
 
 **Access at:** `http://localhost:8080` (or `http://<your-server-ip>:8080`)
 
 ### Daily Usage
+
 ```bash
 # Start container (after stopping or reboot)
 docker start easysipp
@@ -72,22 +69,75 @@ docker stop easysipp
 ```
 
 ### Update to Latest Version
+
 > [!WARNING]
-> Running `docker rm easysipp` will permanently delete existing data from the easysipp container including modified or uploaded XML files. Consider backing up important files first.
+> Running `docker rm easysipp` will permanently delete existing data from the easysipp container, including modified or uploaded XML files. Back up any important files first.
 
 ```bash
 docker stop easysipp
-docker rm easysipp     # All existing data (like your modified or uploaded xml files) will be lost
+docker rm easysipp     # All existing data (like your modified or uploaded XML files) will be lost
 docker pull krndwr/easysipp:latest
 docker run -dt --network host --name easysipp krndwr/easysipp
 ```
 
 ### Complete Removal
+
 ```bash
 docker stop easysipp
-docker rm easysipp     # All existing data (like your modified or uploaded xml files) will be lost
+docker rm easysipp     # All existing data (like your modified or uploaded XML files) will be lost
 docker rmi krndwr/easysipp
 ```
+
+---
+
+## 2. 💻 Run Without Docker (Development Environment)
+
+If you'd rather run easySIPp directly on your machine, for example to develop or customize it, use the included `run_dev_env.sh` script.
+
+### First-Time Setup
+
+**Prerequisites:** `python3` (with `venv` and `pip`), `curl`, and `coreutils` (provides `sha256sum`), plus `libcap2-bin`. The script checks for these on startup. On Debian/Ubuntu, install everything with:
+
+```bash
+sudo apt-get install -y python3 python3-venv python3-pip curl coreutils libcap2-bin
+```
+
+Then clone the repository and make the script executable:
+```bash
+git clone https://github.com/kiran-daware/easySIPp.git
+cd easySIPp
+chmod +x run_dev_env.sh​
+```
+
+### Regular Usage
+
+```bash
+cd easySIPp
+./run_dev_env.sh
+```
+
+**Access at:** `http://127.0.0.1:8080`
+
+### Options
+
+The script reads two optional environment variables:
+
+| Variable | Default     | Description                        |
+|----------|-------------|------------------------------------|
+| `HOST`   | `127.0.0.1` | Address the server binds to        |
+| `PORT`   | `8080`      | Port the server listens on         |
+
+```bash
+# Make it reachable from other machines on your network
+HOST=0.0.0.0 ./run_dev_env.sh
+
+# Use a custom port
+PORT=9000 ./run_dev_env.sh
+
+# Both
+HOST=0.0.0.0 PORT=9000 ./run_dev_env.sh
+```
+
 
 ---
 
@@ -125,6 +175,12 @@ easySIPp is actively developed and used for VoIP testing. However, as with any t
 
 ---
 
+## 🤝 Contributing
+
+Found a bug or have an idea? [Open an issue](https://github.com/kiran-daware/easySIPp/issues) or submit a pull request. Feedback and contributions are always welcome.
+
+---
+
 ## 📝 License
 
 This project is licensed under the **GNU General Public License v3.0** (GPLv3).
@@ -136,7 +192,6 @@ This project is licensed under the **GNU General Public License v3.0** (GPLv3).
 ## ⚠️ Disclaimer
 
 This project is provided **"as is"** without warranty of any kind. Use at your own risk.
-
 
 ---
 
@@ -158,10 +213,10 @@ This project is provided **"as is"** without warranty of any kind. Use at your o
 ### Call flow preview before starting the tests
 ![easySIPp - Call flow preview](/screenshots/easysipp_call_flow_preview.png)
 
-### Realtime status check control of running SIPp calls
+### Real-time status and control of running SIPp calls
 ![easySIPp - SIPp control and real-time status](/screenshots/easysipp_control_screen.png)
 
-### Predefined SIPp XML scnarios
+### Predefined SIPp XML scenarios
 ![easySIPp - Predefined SIPp XML scenarios](/screenshots/easysipp_xml_list.png)
 
 ### SIPp XML Scenario Generator
